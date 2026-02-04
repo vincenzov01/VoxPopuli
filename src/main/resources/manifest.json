@@ -3,8 +3,19 @@
   "Name": "VoxPopuli",
   "Version": "1.0.0",
   "Description": "A Hytale mod to introduce social components",
-  "Authors": [{"Name": "Vincenzo Aucello"}],
+  "Authors": [
+    {
+      "Name": "Vincenzo Aucello",
+      "Role": "Lead Developer",
+      "Contact": "https://github.com/vincenzov01"
+    }
+  ],
   "Main": "com.veim.voxpopuli.VoxPopuliPlugin",
   "LoadOrder": "POSTWORLD",
-  "IncludesAssetPack": true
+  "IncludesAssetPack": true,
+  "License": "AGPL-3.0",
+  "Website": "https://voxpopuli.example.com",
+  "Repository": "https://github.com/vincenzov01/VoxPopuli",
+  "Tags": ["UI", "Social", "Immersive", "Roleplay"],
+  "IncompatibleWith": []
 }
