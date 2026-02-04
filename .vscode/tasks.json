@@ -1,0 +1,73 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Hytale: Run external server",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}\\tools\\run-external-server.ps1"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Hytale: Pull external server log",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}\\tools\\pull-external-server-log.ps1"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Hytale: Tail external server log",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}\\tools\\tail-external-server-log.ps1"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "VoxPopuli: Deploy plugin to server",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Set-Location -LiteralPath 'C:\\Users\\music\\Desktop\\Hytale\\VoxPopuli-Template'; .\\gradlew.bat -q deployToServer"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Hytale: Run external server (start.bat)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"\"C:\\Users\\music\\Desktop\\Hytale\\Server\\start.bat\""
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "test"
+		}
+	]
+}

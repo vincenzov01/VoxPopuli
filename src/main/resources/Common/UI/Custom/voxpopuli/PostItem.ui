@@ -1,0 +1,46 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Padding: (Full: 8);
+  Background: #181f2b(0.92);
+  Anchor: (Height: 90);
+
+  // Autore e data
+  Group {
+    LayoutMode: Left;
+    Anchor: (Height: 22);
+    Label #PostAuthor {
+      Text: "Autore";
+      Style: (FontSize: 13, TextColor: #b4c8c9, RenderBold: true);
+      Anchor: (Width: 120);
+    }
+    Label #PostTimestamp {
+      Text: "Data";
+      Style: (FontSize: 12, TextColor: #6e7da1);
+      Anchor: (Width: 120);
+    }
+  }
+
+  // Contenuto post
+  Label #PostContent {
+    Text: "Contenuto del post...";
+    Style: (FontSize: 15, TextColor: #ffffff);
+    Anchor: (Height: 32);
+  }
+
+  // Like e azioni
+  Group {
+    LayoutMode: Left;
+    Anchor: (Height: 28);
+    $C.@SecondaryTextButton #LikeButton {
+      @Text = "Like";
+      Anchor: (Width: 60, Height: 28);
+    }
+    Label #LikeCount {
+      Text: "0";
+      Anchor: (Width: 32);
+      Style: (FontSize: 13, TextColor: #b4c8c9);
+    }
+  }
+}

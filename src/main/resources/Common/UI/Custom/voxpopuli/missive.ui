@@ -1,0 +1,35 @@
+$C = "../Common.ui";
+
+// --- MISSIVE (Messaggi privati) ---
+Group #MissiveContent {
+  FlexWeight: 1;
+  LayoutMode: Top;
+  Visible: true;
+
+  // Nuovo messaggio
+  Group #NewMessageBox {
+    LayoutMode: Left;
+    Anchor: (Height: 44);
+    $C.@TextField #MessageRecipientInput {
+      Anchor: (Width: 120, Height: 38);
+      PlaceholderText: "Destinatario";
+    }
+    $C.@TextField #MessageTextInput {
+      FlexWeight: 1;
+      Anchor: (Height: 38, Width: 790, Left: 10);
+      PlaceholderText: "Scrivi un messaggio...";
+    }
+    $C.@TextButton #SendMessageButton {
+      @Text = "Invia";
+      Anchor: (Width: 160, Height: 38, Left: 20);
+    }
+  }
+  Group { Anchor: (Height: 10); }
+  // Lista messaggi
+  Group #MessageList {
+    FlexWeight: 1;
+    LayoutMode: Top;
+    Background: #10151e(0.7);
+    Padding: (Full: 8);
+  }
+}

@@ -1,0 +1,31 @@
+$C = "../Common.ui";
+
+// --- CRONACHE (Post) ---
+Group #CronacheContent {
+  FlexWeight: 1;
+  LayoutMode: Top;
+  Visible: true;
+
+  // Nuovo post
+  Group #NewPostBox {
+    LayoutMode: Left;
+    Anchor: (Height: 44);
+    $C.@TextField #NewPostInput {
+      FlexWeight: 1;
+      Anchor: (Height: 38, Width: 900);
+      PlaceholderText: "Scrivi un nuovo post...";
+    }
+    $C.@TextButton #SendPostButton {
+      @Text = "Pubblica";
+      Anchor: (Width: 160, Height: 38, Left: 20);
+    }
+  }
+  Group { Anchor: (Height: 10); }
+  // Lista post
+  Group #PostList {
+    FlexWeight: 1;
+    LayoutMode: Top;
+    Background: #10151e(0.7);
+    Padding: (Full: 8);
+  }
+}

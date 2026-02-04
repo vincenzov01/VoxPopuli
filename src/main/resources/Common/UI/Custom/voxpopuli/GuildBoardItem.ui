@@ -1,0 +1,31 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Padding: (Full: 8);
+  Background: #181f2b(0.92);
+  Anchor: (Height: 62);
+
+  Group {
+    LayoutMode: Left;
+    Anchor: (Height: 18);
+
+    Label #BoardAuthor {
+      Text: "Autore";
+      Style: (FontSize: 13, TextColor: #b4c8c9, RenderBold: true);
+      Anchor: (Width: 140);
+    }
+
+    Label #BoardTimestamp {
+      Text: "Data";
+      Style: (FontSize: 12, TextColor: #6e7da1);
+      Anchor: (Width: 140);
+    }
+  }
+
+  Label #BoardContent {
+    Text: "Messaggio bacheca...";
+    Style: (FontSize: 14, TextColor: #ffffff);
+    Anchor: (Height: 30);
+  }
+}

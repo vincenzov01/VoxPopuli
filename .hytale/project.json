@@ -1,0 +1,10 @@
+{
+  "groupId": "com.veim",
+  "artifactId": "voxpopuli",
+  "modName": "VoxPopuli",
+  "version": "1.0.0",
+  "buildSystem": "Gradle",
+  "language": "Kotlin",
+  "jarPath": "build/libs/voxpopuli-1.0.0.jar",
+  "buildTask": "shadowJar"
+}

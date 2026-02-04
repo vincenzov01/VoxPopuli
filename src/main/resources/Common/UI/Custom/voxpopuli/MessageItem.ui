@@ -1,0 +1,45 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Padding: (Full: 8);
+  Background: #181f2b(0.92);
+  Anchor: (Height: 70);
+
+  // Mittente e data
+  Group {
+    LayoutMode: Left;
+    Anchor: (Height: 20);
+    Label #MessageSender {
+      Text: "Mittente";
+      Style: (FontSize: 13, TextColor: #b4c8c9, RenderBold: true);
+      Anchor: (Width: 120);
+    }
+    Label #MessageTimestamp {
+      Text: "Data";
+      Style: (FontSize: 12, TextColor: #6e7da1);
+      Anchor: (Width: 120);
+    }
+  }
+
+  // Contenuto messaggio
+  Label #MessageContent {
+    Text: "Testo del messaggio...";
+    Style: (FontSize: 15, TextColor: #ffffff);
+    Anchor: (Height: 28);
+  }
+
+  // Azioni (es. rispondi/elimina)
+  Group {
+    LayoutMode: Left;
+    Anchor: (Height: 22);
+    $C.@SecondaryTextButton #ReplyButton {
+      @Text = "Rispondi";
+      Anchor: (Width: 70, Height: 22);
+    }
+    $C.@CancelTextButton #DeleteButton {
+      @Text = "Elimina";
+      Anchor: (Width: 70, Height: 22);
+    }
+  }
+}

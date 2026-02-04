@@ -1,0 +1,20 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Left;
+  Padding: (Full: 6);
+  Background: #10151e(0.35);
+  Anchor: (Height: 24);
+
+  Label #MemberName {
+    Text: "Membro";
+    Style: (FontSize: 14, TextColor: #ffffff, RenderBold: true);
+    Anchor: (Width: 200);
+  }
+
+  Label #MemberRank {
+    Text: "MEMBER";
+    Style: (FontSize: 12, TextColor: #b4c8c9);
+    Anchor: (Width: 120);
+  }
+}
