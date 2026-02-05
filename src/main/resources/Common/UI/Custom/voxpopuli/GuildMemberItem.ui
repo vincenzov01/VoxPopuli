@@ -4,12 +4,12 @@ Group {
   LayoutMode: Left;
   Padding: (Full: 6);
   Background: #10151e(0.35);
-  Anchor: (Height: 24);
+  Anchor: (Height: 32);
 
   Label #MemberName {
     Text: "Membro";
     Style: (FontSize: 14, TextColor: #ffffff, RenderBold: true);
-    Anchor: (Width: 200);
+    FlexWeight: 1;
   }
 
   Label #MemberRank {

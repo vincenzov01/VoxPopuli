@@ -1,53 +1,77 @@
 $C = "../Common.ui";
 
 Group {
-  Anchor: (Width: 1300, Height: 900);
-  Background: #141c26(0.98);
+  Anchor: (Full: 0);
+  Background: #141c26(0);
   LayoutMode: Left;
 
   // Sidebar sinistra con container
   $C.@Container #Sidebar {
-    Anchor: (Height: 900, Width: 200);
+    Anchor: (Top: 20, Bottom: 20, Left: 20, Right: 20, Width: 220);
 
-    // Titolo e dati utente
-    Group #TitleArea {
-      LayoutMode: Top;
-      Padding: (Full: 10);
-      Anchor: (Width: 200, Height: 50);
+    // Mettiamo i contenuti nelle aree corrette del Container
+    Group #Title {
+      Anchor: (Top: 0, Left: 0, Right: 0, Height: 38);
+      Padding: (Top: 7);
       Label #Username {
         Text: "Username";
-        Anchor: (Height: 32);
-        Style: (FontSize: 18, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center);
+        Anchor: (Left: 0, Right: 0, Height: 31);
+        Style: (FontSize: 18, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
       }
     }
-    Label #Guild {
-      Text: "Gilda: Nessuna";
-      Anchor: (Height: 22);
-      Style: (FontSize: 13, TextColor: #b4c8c9, HorizontalAlignment: Center);
-    }
-    Label #Role {
-      Text: "Ruolo: Nessuno";
-      Anchor: (Height: 22);
-      Style: (FontSize: 13, TextColor: #b4c8c9, HorizontalAlignment: Center);
-    }
 
-    // Tab navigation con bottoni
-    Group #TabNav {
+    Group #Content {
+      Anchor: (Top: 38, Bottom: 0, Left: 0, Right: 0);
       LayoutMode: Top;
-      Padding: (Left: 12, Right: 12, Top: 20);
-      FlexWeight: 1;
+      Padding: (Full: 10);
 
-      $C.@TextButton #TabCronache {
-        @Text = "Cronache";
-        Anchor: (Height: 38);
+      Group #GuildInfo {
+        LayoutMode: Top;
+        Anchor: (Height: 72);
+        Label #GuildName {
+          Text: "Gilda: Nessuna";
+          Anchor: (Height: 36);
+          Style: (FontSize: 13, TextColor: #b4c8c9, HorizontalAlignment: Center, Wrap: true);
+        }
+        Label #RoleRole {
+          Text: "Ruolo: Nessuno";
+          Anchor: (Height: 36);
+          Style: (FontSize: 13, TextColor: #b4c8c9, HorizontalAlignment: Center, Wrap: true);
+        }
       }
-      $C.@TextButton #TabMissive {
-        @Text = "Missive";
-        Anchor: (Height: 38);
-      }
-      $C.@TextButton #TabGilda {
-        @Text = "Gilda";
-        Anchor: (Height: 38);
+
+      Group { Anchor: (Height: 10); }
+
+      // Tab navigation con bottoni (sotto Guild/Role)
+      Group #TabNav {
+        LayoutMode: Center;
+        Anchor: (Left: 0, Right: 0);
+        FlexWeight: 1;
+
+        Group #TabNavButtons {
+          // 3 bottoni x 44px + 2 spazi x 6px = 144px
+          Anchor: (Width: 180, Height: 144);
+          LayoutMode: Top;
+
+          $C.@TextButton #TabCronache {
+            @Text = "Cronache";
+            @Anchor = (Width: 180);
+          }
+
+          Group { Anchor: (Height: 6); }
+
+          $C.@TextButton #TabMissive {
+            @Text = "Missive";
+            @Anchor = (Width: 180);
+          }
+
+          Group { Anchor: (Height: 6); }
+
+          $C.@TextButton #TabGilda {
+            @Text = "Gilda";
+            @Anchor = (Width: 180);
+          }
+        }
       }
     }
   }
@@ -55,21 +79,28 @@ Group {
   // Area contenuto destra con container
   $C.@Container #ContentArea {
     FlexWeight: 1;
-    Padding: (Full: 20);
-    LayoutMode: Top;
-    Background: #181f2b(0.92);
+    Anchor: (Top: 20, Bottom: 20, Left: 20, Right: 20,);
 
-    // Titolo della tab
-    Label #ContentTitle {
-      Text: "Cronache";
-      Anchor: (Height: 32);
-      Style: (FontSize: 20, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center);
+    Group #Title {
+      Anchor: (Top: 0, Left: 0, Right: 0, Height: 38);
+      Padding: (Top: 7);
+      Label #ContentTitle {
+        Text: "Cronache";
+        Anchor: (Left: 0, Right: 0, Height: 31);
+        Style: (FontSize: 20, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+      }
     }
 
-    // Contenuto tab (montato lato Kotlin dentro questo container)
-    Group #TabContent {
-      FlexWeight: 1;
+    Group #Content {
+      Anchor: (Top: 38, Bottom: 0, Left: 0, Right: 0);
       LayoutMode: Top;
+      Padding: (Full: 20);
+
+      // Contenuto tab (montato lato Kotlin dentro questo container)
+      Group #TabContent {
+        FlexWeight: 1;
+        LayoutMode: Top;
+      }
     }
   }
 }

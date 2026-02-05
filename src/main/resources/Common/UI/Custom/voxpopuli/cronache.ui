@@ -5,27 +5,37 @@ Group #CronacheContent {
   FlexWeight: 1;
   LayoutMode: Top;
   Visible: true;
+  Anchor: (Left: 0, Right: 0);
 
   // Nuovo post
   Group #NewPostBox {
     LayoutMode: Left;
-    Anchor: (Height: 44);
+    Anchor: (Left: 0, Right: 0, Height: 44);
     $C.@TextField #NewPostInput {
       FlexWeight: 1;
-      Anchor: (Height: 38, Width: 900);
+      Anchor: (Height: 38);
       PlaceholderText: "Scrivi un nuovo post...";
     }
-    $C.@TextButton #SendPostButton {
+
+    Group { Anchor: (Width: 12, Height: 44); }
+
+    $C.@SecondaryTextButton #SendPostButton {
       @Text = "Pubblica";
-      Anchor: (Width: 160, Height: 38, Left: 20);
+      @Anchor = (Width: 160);
     }
   }
   Group { Anchor: (Height: 10); }
-  // Lista post
-  Group #PostList {
+  // Lista post (bacheca)
+  Group {
     FlexWeight: 1;
-    LayoutMode: Top;
+    LayoutMode: TopScrolling;
+    Anchor: (Left: 0, Right: 0);
     Background: #10151e(0.7);
     Padding: (Full: 8);
+
+    Group #PostList {
+      LayoutMode: LeftCenterWrap;
+      Anchor: (Left: 0, Right: 0);
+    }
   }
 }

@@ -51,7 +51,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"Set-Location -LiteralPath 'C:\\Users\\music\\Desktop\\Hytale\\VoxPopuli-Template'; .\\gradlew.bat -q deployToServer"
+				"Set-Location -LiteralPath 'C:\\Users\\music\\Desktop\\Hytale\\VoxPopuliGradle'; .\\gradlew.bat -q deployToServer"
 			],
 			"isBackground": false,
 			"problemMatcher": [],

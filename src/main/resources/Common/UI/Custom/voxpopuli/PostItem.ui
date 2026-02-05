@@ -1,46 +1,60 @@
 $C = "../Common.ui";
 
+@PostsBackground = PatchStyle(TexturePath: "Parchment.png", Border: 0);
+
 Group {
   LayoutMode: Top;
-  Padding: (Full: 8);
-  Background: #181f2b(0.92);
-  Anchor: (Height: 90);
+  Anchor: (Width: 320);
 
-  // Autore e data
   Group {
-    LayoutMode: Left;
-    Anchor: (Height: 22);
-    Label #PostAuthor {
-      Text: "Autore";
-      Style: (FontSize: 13, TextColor: #b4c8c9, RenderBold: true);
-      Anchor: (Width: 120);
-    }
-    Label #PostTimestamp {
-      Text: "Data";
-      Style: (FontSize: 12, TextColor: #6e7da1);
-      Anchor: (Width: 120);
-    }
-  }
+    LayoutMode: Top;
+    Background: @PostsBackground;
+    Padding: (Full: 18);
+    Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
 
-  // Contenuto post
-  Label #PostContent {
-    Text: "Contenuto del post...";
-    Style: (FontSize: 15, TextColor: #ffffff);
-    Anchor: (Height: 32);
-  }
-
-  // Like e azioni
-  Group {
-    LayoutMode: Left;
-    Anchor: (Height: 28);
-    $C.@SecondaryTextButton #LikeButton {
-      @Text = "Like";
-      Anchor: (Width: 60, Height: 28);
+    // Autore e data
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 22);
+      Label #PostAuthor {
+        Text: "Autore";
+        Style: (FontSize: 20, TextColor: #141c26(0.9), RenderBold: true);
+        FlexWeight: 1;
+      }
+      Label #PostTimestamp {
+        Text: "Data";
+        Style: (FontSize: 14, TextColor: #141c26(0.65), HorizontalAlignment: End);
+        Anchor: (Width: 150);
+      }
     }
-    Label #LikeCount {
-      Text: "0";
-      Anchor: (Width: 32);
-      Style: (FontSize: 13, TextColor: #b4c8c9);
+
+    Group { Anchor: (Height: 6); }
+
+    // Contenuto post
+    Label #PostContent {
+      Text: "Contenuto del post...";
+      Style: (FontSize: 18, TextColor: #000000, Wrap: true);
+      Anchor: (Left: 0, Right: 0, Height: 220);
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    // Like e azioni (dentro la pergamena)
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 32);
+      $C.@SmallSecondaryTextButton #LikeButton {
+        @Text = "Like";
+        @Anchor = (Width: 90);
+      }
+
+      Group { Anchor: (Width: 8, Height: 32); }
+
+      Label #LikeCount {
+        Text: "0";
+        Anchor: (Width: 32, Height: 32);
+        Style: (FontSize: 13, TextColor: #141c26(0.75), VerticalAlignment: Center);
+      }
     }
   }
 }

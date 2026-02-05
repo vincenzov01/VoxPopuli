@@ -1,45 +1,56 @@
 $C = "../Common.ui";
 
+@PostsBackground = PatchStyle(TexturePath: "Parchment.png", Border: 0);
+
 Group {
   LayoutMode: Top;
-  Padding: (Full: 8);
-  Background: #181f2b(0.92);
-  Anchor: (Height: 70);
+  Anchor: (Width: 320);
 
-  // Mittente e data
   Group {
-    LayoutMode: Left;
-    Anchor: (Height: 20);
-    Label #MessageSender {
-      Text: "Mittente";
-      Style: (FontSize: 13, TextColor: #b4c8c9, RenderBold: true);
-      Anchor: (Width: 120);
-    }
-    Label #MessageTimestamp {
-      Text: "Data";
-      Style: (FontSize: 12, TextColor: #6e7da1);
-      Anchor: (Width: 120);
-    }
-  }
+    LayoutMode: Top;
+    Background: @PostsBackground;
+    Padding: (Full: 18);
+    Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
 
-  // Contenuto messaggio
-  Label #MessageContent {
-    Text: "Testo del messaggio...";
-    Style: (FontSize: 15, TextColor: #ffffff);
-    Anchor: (Height: 28);
-  }
-
-  // Azioni (es. rispondi/elimina)
-  Group {
-    LayoutMode: Left;
-    Anchor: (Height: 22);
-    $C.@SecondaryTextButton #ReplyButton {
-      @Text = "Rispondi";
-      Anchor: (Width: 70, Height: 22);
+    // Mittente e data
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 20);
+      Label #MessageSender {
+        Text: "Mittente";
+        Style: (FontSize: 16, TextColor: #141c26(0.9), RenderBold: true);
+        FlexWeight: 1;
+      }
+      Label #MessageTimestamp {
+        Text: "Data";
+        Style: (FontSize: 12, TextColor: #141c26(0.65), HorizontalAlignment: End);
+        Anchor: (Width: 150);
+      }
     }
-    $C.@CancelTextButton #DeleteButton {
-      @Text = "Elimina";
-      Anchor: (Width: 70, Height: 22);
+
+    Group { Anchor: (Height: 6); }
+
+    // Contenuto messaggio
+    Label #MessageContent {
+      Text: "Testo del messaggio...";
+      Style: (FontSize: 15, TextColor: #000000, Wrap: true);
+      Anchor: (Left: 0, Right: 0, Height: 72);
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    // Azioni (es. rispondi/elimina)
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 32);
+      $C.@SmallSecondaryTextButton #ReplyButton {
+        @Text = "Rispondi";
+        @Anchor = (Width: 120);
+      }
+        $C.@SmallSecondaryTextButton #DeleteButton {
+          @Text = "Elimina";
+          @Anchor = (Width: 120);
+        }
     }
   }
 }
