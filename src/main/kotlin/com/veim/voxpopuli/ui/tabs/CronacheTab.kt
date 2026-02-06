@@ -8,6 +8,7 @@ import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.veim.voxpopuli.database.PostServices
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
+import com.veim.voxpopuli.util.FileAuditLog
 import com.veim.voxpopuli.util.InventoryUtil
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -107,7 +108,18 @@ object CronacheTab : BaseVoxTab(id = "cronache", title = "Cronache") {
                 }
                 val user = getOrCreateUser(page)
                 if (user != null) {
-                    PostServices.createPost(user.id, postText)
+                    val post = PostServices.createPost(user.id, postText)
+                    if (post != null) {
+                        FileAuditLog.logUserAction(
+                            actorUsername = page.player.username,
+                            actorUserId = user.id,
+                            action = "post.create",
+                            targetPostId = post.id,
+                            details = mapOf(
+                                "contentLen" to postText.length.toString(),
+                            )
+                        )
+                    }
                     page.draftPostText = ""
                     cmd.set(page.tabSel("#NewPostInput.Value"), "")
                 }
@@ -121,7 +133,15 @@ object CronacheTab : BaseVoxTab(id = "cronache", title = "Cronache") {
                 if (postId < 0) return true
                 val user = getOrCreateUser(page)
                 if (user != null) {
-                    PostServices.addLike(postId, user.id)
+                    val ok = PostServices.addLike(postId, user.id)
+                    if (ok) {
+                        FileAuditLog.logUserAction(
+                            actorUsername = page.player.username,
+                            actorUserId = user.id,
+                            action = "post.like",
+                            targetPostId = postId,
+                        )
+                    }
                 }
 
                 apply(cmd)

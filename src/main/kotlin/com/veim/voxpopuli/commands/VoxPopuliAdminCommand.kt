@@ -14,6 +14,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.veim.voxpopuli.VoxPopuliPlugin
 import com.veim.voxpopuli.database.UserServices
 import com.veim.voxpopuli.ui.VoxPopuliAdminDashboardPage
+import com.veim.voxpopuli.util.FileAuditLog
 import com.veim.voxpopuli.util.OpPermissionsUtil
 
 class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlayerCommand("voxadmin", "Apri la dashboard admin VoxPopuli") {
@@ -112,6 +113,17 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
                 commandContext.sendMessage(Message.raw("Errore aggiornando i permessi admin per '${target.username}'."))
                 return
             }
+
+            val actor = UserServices.getUserByUsername(playerRef.username) ?: UserServices.createUser(playerRef.username)
+            FileAuditLog.logAdminAction(
+                actorUsername = playerRef.username,
+                actorUserId = actor?.id ?: -1,
+                action = if (makeAdmin) "admin.add" else "admin.remove",
+                targetUserId = target.id,
+                details = mapOf(
+                    "targetUsername" to target.username,
+                ),
+            )
 
             val status = if (makeAdmin) "ADMIN" else "NON-ADMIN"
             commandContext.sendMessage(Message.raw("${target.username} impostato come $status."))

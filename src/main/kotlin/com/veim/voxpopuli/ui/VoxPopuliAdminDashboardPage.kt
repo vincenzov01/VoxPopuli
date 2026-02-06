@@ -23,6 +23,7 @@ import com.veim.voxpopuli.database.MessageServices
 import com.veim.voxpopuli.database.PostServices
 import com.veim.voxpopuli.database.UserServices
 import com.veim.voxpopuli.util.OpPermissionsUtil
+import com.veim.voxpopuli.util.FileAuditLog
 import java.util.logging.Level
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,7 +52,8 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
 
     private var activeTabId: String = TAB_CONFIG
     private var statusMessage: String = ""
-
+    private var logsStatus: String = ""
+    private var logsText: String = ""
     private var postsStatus: String = ""
     private var messagesStatus: String = ""
     private var guildBoardStatus: String = ""
@@ -85,6 +87,13 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
 
     private fun buildLayout(cmd: UICommandBuilder) {
         cmd.append("voxpopuli/AdminDashboard.ui")
+    }
+
+    private fun refreshLogs() {
+        val maxLines = 200
+        val lines = FileAuditLog.tailLines(maxLines)
+        logsText = if (lines.isEmpty()) "(nessun log)" else lines.joinToString("\n")
+        logsStatus = "Mostrati ultimi ${lines.size} eventi"
     }
 
     private fun bindEvents(evt: UIEventBuilder) {
@@ -157,6 +166,7 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
         evt.addEventBinding(CustomUIEventBindingType.Activating, "#ReloadConfigButton", uiEventData("reload_config"), false)
 
 		// Moderation refresh
+        evt.addEventBinding(CustomUIEventBindingType.Activating, "#RefreshLogsButton", uiEventData("refresh_logs"), false)
 		evt.addEventBinding(CustomUIEventBindingType.Activating, "#RefreshPostsButton", uiEventData("refresh_posts"), false)
 		evt.addEventBinding(CustomUIEventBindingType.Activating, "#RefreshMessagesButton", uiEventData("refresh_messages"), false)
 		evt.addEventBinding(CustomUIEventBindingType.Activating, "#RefreshGuildBoardButton", uiEventData("refresh_guild_board"), false)
@@ -403,6 +413,10 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
         cmd.set("#GuildsRequiredItemIdToCreateRow.Visible", configSnapshot.guilds.requireItemToCreate)
         cmd.set("#GuildsRequiredItemIdToCreateInput.Value", configSnapshot.guilds.requiredItemIdToCreate)
 
+        // Logs
+        cmd.set("#LogsStatusLabel.Text", logsStatus)
+        cmd.set("#LogsText.Text", logsText)
+
         cmd.set("#SaveStatusLabel.Text", statusMessage)
         cmd.set("#PostsStatusLabel.Text", postsStatus)
         cmd.set("#MessagesStatusLabel.Text", messagesStatus)
@@ -465,10 +479,11 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                     TAB_LOGS -> TAB_LOGS
                     TAB_POSTS -> TAB_POSTS
                     TAB_MESSAGES -> TAB_MESSAGES
-					TAB_GUILDS -> TAB_GUILDS
+                    TAB_GUILDS -> TAB_GUILDS
                     else -> TAB_CONFIG
                 }
-				statusMessage = ""
+                statusMessage = ""
+                if (activeTabId == TAB_LOGS) refreshLogs()
             }
 
             "toggle_tabs_cronache" -> {
@@ -530,6 +545,27 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                 plugin.saveConfig(configSnapshot)
                 configSnapshot = plugin.config()
                 statusMessage = "Salvato nel DB"
+
+                FileAuditLog.logAdminAction(
+                    actorUsername = player.username,
+                    actorUserId = user.id,
+                    action = "config.save",
+                    details = mapOf(
+                        "tabs.enableCronache" to configSnapshot.tabs.enableCronache.toString(),
+                        "tabs.enableMissive" to configSnapshot.tabs.enableMissive.toString(),
+                        "tabs.enableGilda" to configSnapshot.tabs.enableGilda.toString(),
+                        "posts.requireItemToPost" to configSnapshot.posts.requireItemToPost.toString(),
+                        "posts.requiredItemIdToPost" to configSnapshot.posts.requiredItemIdToPost,
+                        "messages.allowDelete" to configSnapshot.messages.allowDelete.toString(),
+                        "messages.requireItemToSend" to configSnapshot.messages.requireItemToSend.toString(),
+                        "messages.requiredItemIdToSend" to configSnapshot.messages.requiredItemIdToSend,
+                        "guildBoard.allowPost" to configSnapshot.guildBoard.allowPost.toString(),
+                        "guildBoard.requireItemToPost" to configSnapshot.guildBoard.requireItemToPost.toString(),
+                        "guildBoard.requiredItemIdToPost" to configSnapshot.guildBoard.requiredItemIdToPost,
+                        "guilds.requireItemToCreate" to configSnapshot.guilds.requireItemToCreate.toString(),
+                        "guilds.requiredItemIdToCreate" to configSnapshot.guilds.requiredItemIdToCreate,
+                    )
+                )
             }
 
             "refresh_posts" -> {
@@ -558,6 +594,13 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                     GuildServices.deleteGuild(gid)
                     if (selectedGuildId == gid) selectedGuildId = -1
                     guildsStatus = "Gilda eliminata"
+
+                    FileAuditLog.logAdminAction(
+                        actorUsername = player.username,
+                        actorUserId = user.id,
+                        action = "guild.delete",
+                        targetGuildId = gid,
+                    )
                 }
             }
             "kick_member_admin" -> {
@@ -566,6 +609,14 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                 if (gid > 0 && uid > 0) {
                     GuildServices.removeMember(gid, uid)
                     guildsStatus = "Membro rimosso"
+
+                    FileAuditLog.logAdminAction(
+                        actorUsername = player.username,
+                        actorUserId = user.id,
+                        action = "guild.member.kick",
+                        targetGuildId = gid,
+                        targetUserId = uid,
+                    )
                 }
             }
             "promote_member_admin" -> {
@@ -577,6 +628,15 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                     if (rank == GuildRank.MEMBER) {
                         GuildServices.setRank(gid, uid, GuildRank.OFFICER)
                         guildsStatus = "Promosso"
+
+                        FileAuditLog.logAdminAction(
+                            actorUsername = player.username,
+                            actorUserId = user.id,
+                            action = "guild.member.promote",
+                            targetGuildId = gid,
+                            targetUserId = uid,
+                            details = mapOf("rank" to "OFFICER"),
+                        )
                     }
                 }
             }
@@ -589,6 +649,15 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                     if (rank == GuildRank.OFFICER) {
                         GuildServices.setRank(gid, uid, GuildRank.MEMBER)
                         guildsStatus = "Retrocesso"
+
+                        FileAuditLog.logAdminAction(
+                            actorUsername = player.username,
+                            actorUserId = user.id,
+                            action = "guild.member.demote",
+                            targetGuildId = gid,
+                            targetUserId = uid,
+                            details = mapOf("rank" to "MEMBER"),
+                        )
                     }
                 }
             }
@@ -599,6 +668,14 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                     GuildServices.transferOwnership(gid, uid)
                     selectedGuildId = gid
                     guildsStatus = "Owner cambiato"
+
+                    FileAuditLog.logAdminAction(
+                        actorUsername = player.username,
+                        actorUserId = user.id,
+                        action = "guild.owner.set",
+                        targetGuildId = gid,
+                        targetUserId = uid,
+                    )
                 }
             }
 
@@ -606,6 +683,12 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                 val id = data.id
                 if (id > 0) {
                     PostServices.deletePost(id)
+                    FileAuditLog.logAdminAction(
+                        actorUsername = player.username,
+                        actorUserId = user.id,
+                        action = "post.delete",
+                        targetPostId = id
+                    )
                     postsStatus = "Post eliminato"
                 }
             }
@@ -614,15 +697,32 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                 if (id > 0) {
                     MessageServices.deleteMessage(id, userId = user.id, allowAdminBypass = true)
                     messagesStatus = "Messaggio eliminato"
+
+                    FileAuditLog.logAdminAction(
+                        actorUsername = player.username,
+                        actorUserId = user.id,
+                        action = "message.delete",
+                        details = mapOf("messageId" to id.toString()),
+                    )
                 }
             }
             "delete_guild_board_admin" -> {
                 val id = data.id
                 if (id > 0) {
-                    GuildServices.deleteBoardMessage(id, userId = user.id, allowAdminBypass = true)
+                    GuildServices.deleteBoardMessage(
+                        id, userId = user.id, 
+                        allowAdminBypass = true)
                     guildBoardStatus = "Comunicazione eliminata"
+
+                    FileAuditLog.logAdminAction(
+                        actorUsername = player.username,
+                        actorUserId = user.id,
+                        action = "guild.board.delete",
+                        details = mapOf("messageId" to id.toString()),
+                    )
                 }
             }
+            "refresh_logs" -> refreshLogs()
         }
 
         val cmd = UICommandBuilder()

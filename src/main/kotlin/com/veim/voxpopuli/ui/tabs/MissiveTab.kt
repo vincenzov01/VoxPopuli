@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.veim.voxpopuli.database.MessageServices
 import com.veim.voxpopuli.database.UserServices
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
+import com.veim.voxpopuli.util.FileAuditLog
 import com.veim.voxpopuli.util.InventoryUtil
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -148,6 +149,16 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 
 				val receiver = UserServices.getUserByUsername(recipientName) ?: UserServices.createUser(recipientName)
 				if (receiver != null) {
+					FileAuditLog.logUserAction(
+						actorUsername = page.player.username,
+						actorUserId = sender.id,
+						action = "message.send",
+						targetUserId = receiver.id,
+						details = mapOf(
+							"receiverUsername" to receiver.username,
+							"contentLen" to content.length.toString(),
+						),
+					)
 					MessageServices.sendMessage(sender.id, receiver.id, content)
 					page.draftMessageText = ""
 					cmd.set(page.tabSel("#MessageTextInput.Value"), "")
@@ -178,6 +189,19 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 				val user = getOrCreateUser(page) ?: return true
 				val messageId = data.postId
 				if (messageId < 0) return true
+				val msg = MessageServices.getMessageById(messageId)
+				val otherUserId = if (msg != null) {
+					if (msg.senderId == user.id) msg.receiverId else msg.senderId
+				} else {
+					null
+				}
+				FileAuditLog.logUserAction(
+					actorUsername = page.player.username,
+					actorUserId = user.id,
+					action = "message.delete",
+					targetUserId = otherUserId,
+					details = mapOf("messageId" to messageId.toString()),
+				)
 				MessageServices.deleteMessage(messageId, user.id)
 
 				apply(cmd)

@@ -494,14 +494,45 @@ Group {
       }
 
       // Placeholder tab logs
+            // --- LOGS ---
       Group #LogsContent {
         FlexWeight: 1;
-        LayoutMode: Center;
+        LayoutMode: Top;
         Anchor: (Left: 0, Right: 0);
         Visible: false;
-        Label {
-          Text: "(TODO) Log Admin";
-          Style: (FontSize: 14, TextColor: #b4c8c9);
+
+        Group {
+          LayoutMode: Left;
+          Anchor: (Left: 0, Right: 0, Height: 44);
+
+          $C.@SecondaryTextButton #RefreshLogsButton {
+            @Text = "Aggiorna";
+            @Anchor = (Width: 180);
+          }
+
+          Group { Anchor: (Width: 12, Height: 44); }
+
+          Label #LogsStatusLabel {
+            Text: "";
+            FlexWeight: 1;
+            Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+          }
+        }
+
+        Group { Anchor: (Height: 10); }
+
+        Group {
+          FlexWeight: 1;
+          LayoutMode: TopScrolling;
+          Anchor: (Left: 0, Right: 0);
+          Background: #10151e(0.7);
+          Padding: (Full: 8);
+
+          Label #LogsText {
+            Text: "";
+            Anchor: (Left: 0, Right: 0, Height: 1400);
+            Style: (FontSize: 12, TextColor: #e8f0f2(0.90), Wrap: true);
+          }
         }
       }
 

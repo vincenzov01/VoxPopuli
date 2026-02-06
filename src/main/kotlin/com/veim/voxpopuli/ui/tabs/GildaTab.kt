@@ -10,6 +10,7 @@ import com.veim.voxpopuli.database.GuildRank
 import com.veim.voxpopuli.database.GuildServices
 import com.veim.voxpopuli.database.UserServices
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
+import com.veim.voxpopuli.util.FileAuditLog
 import com.veim.voxpopuli.util.InventoryUtil
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -350,7 +351,16 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 					if (hasItem != true) return true
 				}
 
-				GuildServices.createGuild(name, user.id)
+				val guild = GuildServices.createGuild(name, user.id)
+				if (guild != null) {
+					FileAuditLog.logUserAction(
+						actorUsername = page.player.username,
+						actorUserId = user.id,
+						action = "guild.create",
+						targetGuildId = guild.id,
+						details = mapOf("name" to name),
+					)
+				}
 				page.draftCreateGuildName = ""
 				cmd.set(page.tabSel("#CreateGuildNameInput.Value"), "")
 
@@ -371,6 +381,14 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				if (target.guildId != null) return true
 
 				GuildServices.addMember(guild.id, target.id, GuildRank.MEMBER)
+				FileAuditLog.logUserAction(
+					actorUsername = page.player.username,
+					actorUserId = user.id,
+					action = "guild.member.add",
+					targetGuildId = guild.id,
+					targetUserId = target.id,
+					details = mapOf("targetUsername" to target.username),
+				)
 				page.draftInviteMemberUsername = ""
 				cmd.set(page.tabSel("#InviteMemberInput.Value"), "")
 
@@ -393,6 +411,14 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				val targetRank = guild.members.firstOrNull { it.userId == target.id }?.rank ?: GuildRank.MEMBER
 				if (targetRank == GuildRank.MEMBER) {
 					GuildServices.setRank(guild.id, target.id, GuildRank.OFFICER)
+					FileAuditLog.logUserAction(
+						actorUsername = page.player.username,
+						actorUserId = user.id,
+						action = "guild.member.promote",
+						targetGuildId = guild.id,
+						targetUserId = target.id,
+						details = mapOf("rank" to "OFFICER", "targetUsername" to target.username),
+					)
 				}
 				page.draftPromoteMemberUsername = ""
 				cmd.set(page.tabSel("#PromoteMemberInput.Value"), "")
@@ -416,6 +442,14 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				val targetRank = guild.members.firstOrNull { it.userId == target.id }?.rank ?: GuildRank.MEMBER
 				if (targetRank == GuildRank.OFFICER) {
 					GuildServices.setRank(guild.id, target.id, GuildRank.MEMBER)
+					FileAuditLog.logUserAction(
+						actorUsername = page.player.username,
+						actorUserId = user.id,
+						action = "guild.member.demote",
+						targetGuildId = guild.id,
+						targetUserId = target.id,
+						details = mapOf("rank" to "MEMBER", "targetUsername" to target.username),
+					)
 				}
 
 				page.draftDemoteMemberUsername = ""
@@ -442,6 +476,14 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				if (selfRank == GuildRank.OFFICER && targetRank == GuildRank.OFFICER) return true
 
 				GuildServices.removeMember(guild.id, target.id)
+				FileAuditLog.logUserAction(
+					actorUsername = page.player.username,
+					actorUserId = user.id,
+					action = "guild.member.kick",
+					targetGuildId = guild.id,
+					targetUserId = target.id,
+					details = mapOf("targetUsername" to target.username),
+				)
 				page.draftKickMemberUsername = ""
 				cmd.set(page.tabSel("#KickMemberInput.Value"), "")
 
@@ -458,13 +500,33 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 					val others = guild.members.filter { it.userId != user.id }
 					if (others.isEmpty()) {
 						GuildServices.deleteGuild(guild.id)
+						FileAuditLog.logUserAction(
+							actorUsername = page.player.username,
+							actorUserId = user.id,
+							action = "guild.delete",
+							targetGuildId = guild.id,
+							details = mapOf("reason" to "owner_left_last_member"),
+						)
 					} else {
 						val newOwnerId = others.first().userId
 						GuildServices.setOwner(guild.id, newOwnerId)
 						GuildServices.removeMember(guild.id, user.id)
+						FileAuditLog.logUserAction(
+							actorUsername = page.player.username,
+							actorUserId = user.id,
+							action = "guild.leave",
+							targetGuildId = guild.id,
+							details = mapOf("newOwnerId" to newOwnerId.toString()),
+						)
 					}
 				} else {
 					GuildServices.removeMember(guild.id, user.id)
+					FileAuditLog.logUserAction(
+						actorUsername = page.player.username,
+						actorUserId = user.id,
+						action = "guild.leave",
+						targetGuildId = guild.id,
+					)
 				}
 
 				apply(cmd)
@@ -478,6 +540,12 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				if (selfRank != GuildRank.OWNER) return true
 
 				GuildServices.deleteGuild(guild.id)
+				FileAuditLog.logUserAction(
+					actorUsername = page.player.username,
+					actorUserId = user.id,
+					action = "guild.delete",
+					targetGuildId = guild.id,
+				)
 				apply(cmd)
 				render(page, ref, store, cmd, evt)
 				return true
@@ -497,6 +565,13 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				}
 
 				GuildServices.addBoardMessage(guild.id, user.id, content)
+				FileAuditLog.logUserAction(
+					actorUsername = page.player.username,
+					actorUserId = user.id,
+					action = "guild.board.post",
+					targetGuildId = guild.id,
+					details = mapOf("contentLen" to content.length.toString()),
+				)
 				page.draftGuildBoardText = ""
 				cmd.set(page.tabSel("#GuildBoardInput.Value"), "")
 
