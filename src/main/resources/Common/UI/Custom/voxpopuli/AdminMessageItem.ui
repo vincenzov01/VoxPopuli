@@ -1,0 +1,47 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Anchor: (Width: 320);
+
+  Group {
+    LayoutMode: Top;
+    Background: #10151e(0.85);
+    Padding: (Full: 18);
+    Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 20);
+      Label #MessageSender {
+        Text: "Da -> A";
+        Style: (FontSize: 16, TextColor: #ffffff(0.92), RenderBold: true);
+        FlexWeight: 1;
+      }
+      Label #MessageTimestamp {
+        Text: "Data";
+        Style: (FontSize: 12, TextColor: #b4c8c9(0.75), HorizontalAlignment: End);
+        Anchor: (Width: 150);
+      }
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Label #MessageContent {
+      Text: "Messaggio...";
+      Style: (FontSize: 15, TextColor: #e8f0f2(0.92), Wrap: true);
+      Anchor: (Left: 0, Right: 0, Height: 96);
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Group {
+      LayoutMode: Right;
+      Anchor: (Height: 32);
+      $C.@SmallSecondaryTextButton #DeleteButton {
+        @Text = "Elimina";
+        @Anchor = (Width: 120);
+      }
+    }
+  }
+}

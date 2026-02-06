@@ -34,6 +34,21 @@ object MessageServices {
             }
     }
 
+    fun getAllMessages(limit: Int = 200): List<Message> = transaction {
+        Messages.selectAll()
+            .orderBy(Messages.timestamp, SortOrder.DESC)
+            .limit(limit)
+            .map {
+                Message(
+                    id = it[Messages.id],
+                    senderId = it[Messages.senderId],
+                    receiverId = it[Messages.receiverId],
+                    content = it[Messages.content],
+                    timestamp = it[Messages.timestamp]
+                )
+            }
+    }
+
     fun sendMessage(senderId: Int, receiverId: Int, content: String) {
         transaction {
             Messages.insert {
@@ -45,10 +60,17 @@ object MessageServices {
         }
     }
 
-    fun deleteMessage(messageId: Int, userId: Int) {
+    fun deleteMessage(messageId: Int, userId: Int, allowAdminBypass: Boolean = false) {
         transaction {
+            if (allowAdminBypass) {
+                Messages.deleteWhere { Messages.id eq messageId }
+                return@transaction
+            }
+
             // Only sender or receiver can delete
-            Messages.deleteWhere { (Messages.id eq messageId) and ((Messages.senderId eq userId) or (Messages.receiverId eq userId)) }
+            Messages.deleteWhere {
+                (Messages.id eq messageId) and ((Messages.senderId eq userId) or (Messages.receiverId eq userId))
+            }
         }
     }
 }

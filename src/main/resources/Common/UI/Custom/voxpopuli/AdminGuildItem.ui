@@ -1,0 +1,46 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Anchor: (Width: 320);
+
+  Group {
+    LayoutMode: Top;
+    Background: #10151e(0.85);
+    Padding: (Full: 18);
+    Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
+
+    Label #GuildName {
+      Text: "Nome Gilda";
+      Anchor: (Height: 22);
+      Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true, Wrap: true);
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Label #GuildMeta {
+      Text: "Owner: ? | Membri: 0";
+      Anchor: (Height: 18);
+      Style: (FontSize: 12, TextColor: #b4c8c9(0.75), Wrap: true);
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 32);
+
+      $C.@SmallSecondaryTextButton #OpenButton {
+        @Text = "Apri";
+        @Anchor = (Width: 120);
+      }
+
+      Group { Anchor: (Width: 8, Height: 32); }
+
+      $C.@SmallSecondaryTextButton #DeleteButton {
+        @Text = "Elimina";
+        @Anchor = (Width: 120);
+      }
+    }
+  }
+}

@@ -4,7 +4,9 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit
 import com.hypixel.hytale.logger.HytaleLogger
 import com.veim.voxpopuli.commands.VoxPopuliPluginCommand
-import com.veim.voxpopuli.config.VoxPopuliConfigManager
+import com.veim.voxpopuli.commands.VoxPopuliAdminCommand
+import com.veim.voxpopuli.config.VoxPopuliConfig
+import com.veim.voxpopuli.config.VoxPopuliDbConfigStore
 import com.veim.voxpopuli.database.DatabaseManager
 import java.util.logging.Level
 
@@ -17,12 +19,23 @@ class VoxPopuliPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         private val LOGGER = HytaleLogger.forEnclosingClass()
     }
 
-    private val configManager: VoxPopuliConfigManager = VoxPopuliConfigManager(VoxPopuliConfigManager.defaultPath())
+    private val dbPath: String = VoxPopuliConfig().database.path
+
+    @Volatile
+    private var runtimeConfig: VoxPopuliConfig = VoxPopuliConfig()
+
+    fun config(): VoxPopuliConfig = runtimeConfig
+
+    fun saveConfig(config: VoxPopuliConfig) {
+        // Single source of truth: DB.
+        // Keep db path consistent even if callers mutate it.
+        val toSave = config.copy(database = config.database.copy(path = dbPath))
+        runtimeConfig = toSave
+        VoxPopuliDbConfigStore.save(toSave)
+    }
 
     init {
-        // The Hytale API can be strict about when config access happens; keep this in the constructor.
-        configManager.ensureExists()
-        configManager.load()
+        // No-op: config is DB-only.
     }
 
     override fun setup() {
@@ -30,12 +43,12 @@ class VoxPopuliPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         // le risorse del plugin (senza fare integrazioni cross-plugin pesanti).
         LOGGER.at(Level.INFO).log("[VoxPopuli] Setting up...")
 
-        // Ensure config file exists and is up-to-date on disk.
-        configManager.save()
-        LOGGER.at(Level.INFO).log("[VoxPopuli] Config path: %s", configManager.path().toAbsolutePath().toString())
-
         // Inizializza il database (Exposed/SQLite).
-        DatabaseManager.init(configManager.get().database.path)
+        DatabaseManager.init(dbPath)
+
+        // Load config from DB (or seed from defaults).
+        val loaded = VoxPopuliDbConfigStore.loadOrInit(VoxPopuliConfig())
+        runtimeConfig = loaded.config.copy(database = loaded.config.database.copy(path = dbPath))
 
         // Il plugin deve collegarsi al comando: registriamo solo un comando base.
         registerCommands()
@@ -45,8 +58,11 @@ class VoxPopuliPlugin(init: JavaPluginInit) : JavaPlugin(init) {
 
     private fun registerCommands() {
         try {
-            commandRegistry.registerCommand(VoxPopuliPluginCommand())
+            commandRegistry.registerCommand(VoxPopuliPluginCommand(this))
             LOGGER.at(Level.INFO).log("[VoxPopuli] Registered /vox command")
+
+            commandRegistry.registerCommand(VoxPopuliAdminCommand(this))
+            LOGGER.at(Level.INFO).log("[VoxPopuli] Registered /voxadmin command")
         } catch (e: Exception) {
             LOGGER.at(Level.WARNING).withCause(e).log("[VoxPopuli] Failed to register commands")
         }

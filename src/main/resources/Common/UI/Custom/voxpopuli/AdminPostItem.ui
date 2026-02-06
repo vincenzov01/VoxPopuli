@@ -1,0 +1,54 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Anchor: (Width: 320);
+
+  Group {
+    LayoutMode: Top;
+    Background: #10151e(0.85);
+    Padding: (Full: 18);
+    Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 22);
+      Label #PostAuthor {
+        Text: "Autore";
+        Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
+        FlexWeight: 1;
+      }
+      Label #PostTimestamp {
+        Text: "Data";
+        Style: (FontSize: 12, TextColor: #b4c8c9(0.75), HorizontalAlignment: End);
+        Anchor: (Width: 150);
+      }
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Label #PostContent {
+      Text: "Contenuto...";
+      Style: (FontSize: 15, TextColor: #e8f0f2(0.92), Wrap: true);
+      Anchor: (Left: 0, Right: 0, Height: 140);
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 32);
+
+      Label #LikeCount {
+        Text: "0 like";
+        FlexWeight: 1;
+        Style: (FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center);
+      }
+
+      $C.@SmallSecondaryTextButton #DeleteButton {
+        @Text = "Elimina";
+        @Anchor = (Width: 120);
+      }
+    }
+  }
+}

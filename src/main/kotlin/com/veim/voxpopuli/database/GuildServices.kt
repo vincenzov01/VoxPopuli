@@ -31,7 +31,27 @@ object GuildServices {
             }
         }
 
-        fun deleteBoardMessage(messageId: Int, userId: Int) = transaction {
+        fun getAllBoardMessages(limit: Int = 200): List<GuildBoardMessage> = transaction {
+            GuildBoardMessages.selectAll()
+                .orderBy(GuildBoardMessages.timestamp, SortOrder.DESC)
+                .limit(limit)
+                .map {
+                    GuildBoardMessage(
+                        id = it[GuildBoardMessages.id],
+                        guildId = it[GuildBoardMessages.guildId],
+                        authorId = it[GuildBoardMessages.authorId],
+                        content = it[GuildBoardMessages.content],
+                        timestamp = it[GuildBoardMessages.timestamp]
+                    )
+                }
+        }
+
+        fun deleteBoardMessage(messageId: Int, userId: Int, allowAdminBypass: Boolean = false) = transaction {
+            if (allowAdminBypass) {
+                GuildBoardMessages.deleteWhere { GuildBoardMessages.id eq messageId }
+                return@transaction
+            }
+
             // Solo autore o owner può cancellare
             val msg = GuildBoardMessages.select { GuildBoardMessages.id eq messageId }.singleOrNull()
             val guildId = msg?.get(GuildBoardMessages.guildId)
@@ -68,6 +88,26 @@ object GuildServices {
         GuildMembers.select { GuildMembers.userId eq userId }.mapNotNull {
             getGuildById(it[GuildMembers.guildId])
         }
+    }
+
+    fun getAllGuilds(limit: Int = 200): List<Guild> = transaction {
+        Guilds.selectAll()
+            .orderBy(Guilds.id, SortOrder.DESC)
+            .limit(limit)
+            .map { row ->
+                val guildId = row[Guilds.id].value
+                Guild(
+                    id = guildId,
+                    name = row[Guilds.name],
+                    ownerId = row[Guilds.ownerId],
+                    members = GuildMembers.select { GuildMembers.guildId eq guildId }.map { gm ->
+                        GuildMember(
+                            userId = gm[GuildMembers.userId],
+                            rank = GuildRank.valueOf(gm[GuildMembers.rank])
+                        )
+                    }
+                )
+            }
     }
 
     fun createGuild(name: String, ownerId: Int): Guild? = transaction {
@@ -116,6 +156,22 @@ object GuildServices {
     }
 
     fun setOwner(guildId: Int, newOwnerId: Int) = transaction {
+        Guilds.update({ Guilds.id eq guildId }) {
+            it[ownerId] = newOwnerId
+        }
+        setRank(guildId, newOwnerId, GuildRank.OWNER)
+    }
+
+    fun transferOwnership(guildId: Int, newOwnerId: Int) = transaction {
+        val currentOwnerId = Guilds
+            .select { Guilds.id eq guildId }
+            .singleOrNull()
+            ?.get(Guilds.ownerId)
+
+        if (currentOwnerId != null && currentOwnerId != newOwnerId) {
+            setRank(guildId, currentOwnerId, GuildRank.OFFICER)
+        }
+
         Guilds.update({ Guilds.id eq guildId }) {
             it[ownerId] = newOwnerId
         }

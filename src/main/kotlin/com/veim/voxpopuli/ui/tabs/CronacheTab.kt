@@ -8,6 +8,7 @@ import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.veim.voxpopuli.database.PostServices
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
+import com.veim.voxpopuli.util.InventoryUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -92,11 +93,18 @@ object CronacheTab : BaseVoxTab(id = "cronache", title = "Cronache") {
                 return true
             }
             "new_post" -> {
+                val config = page.configSnapshot.posts
                 val postText = (data.text.ifBlank { page.draftPostText }).trim()
 				if (postText.isBlank()) {
 					// Likely missing FocusLost/Validating capture; keep UI stable.
 					return true
 				}
+
+                if (config.requireItemToPost) {
+                    val requiredItemId = config.requiredItemIdToPost.trim()
+                    val hasItem = InventoryUtil.playerHasItemId(store, ref, requiredItemId)
+                    if (hasItem != true) return true
+                }
                 val user = getOrCreateUser(page)
                 if (user != null) {
                     PostServices.createPost(user.id, postText)

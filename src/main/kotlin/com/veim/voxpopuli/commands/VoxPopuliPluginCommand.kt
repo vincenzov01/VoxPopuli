@@ -9,9 +9,10 @@ import com.hypixel.hytale.server.core.entity.entities.Player
 import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.World
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
+import com.veim.voxpopuli.VoxPopuliPlugin
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
 
-class VoxPopuliPluginCommand : AbstractPlayerCommand("vox", "Apri la dashboard VoxPopuli") {
+class VoxPopuliPluginCommand(private val plugin: VoxPopuliPlugin) : AbstractPlayerCommand("vox", "Apri la dashboard VoxPopuli") {
     override fun canGeneratePermission(): Boolean = false
 
     override fun execute(
@@ -28,6 +29,6 @@ class VoxPopuliPluginCommand : AbstractPlayerCommand("vox", "Apri la dashboard V
         }
 
         // AbstractPlayerCommand runs on the world thread: safe to access Store/Refs.
-        player.pageManager.openCustomPage(ref, store, VoxPopuliDashboardPage(playerRef))
+        player.pageManager.openCustomPage(ref, store, VoxPopuliDashboardPage(playerRef, plugin))
     }
 }

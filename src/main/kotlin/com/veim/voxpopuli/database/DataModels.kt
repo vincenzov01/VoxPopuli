@@ -154,6 +154,14 @@ object AdminActionLogs : Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
+// --- PLUGIN CONFIG (JSON stored in DB) ---
+object VoxPopuliPluginConfig : Table("voxpopuli_plugin_config") {
+    val id = integer("id")
+    val json = text("json")
+    val updatedAtEpochSeconds = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
 // --- POST LIKES ---
 object PostLikes : Table() {
     val postId = integer("post_id")

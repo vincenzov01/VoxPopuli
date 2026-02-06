@@ -1,0 +1,61 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: Top;
+  Anchor: (Width: 320);
+
+  Group {
+    LayoutMode: Top;
+    Background: #10151e(0.85);
+    Padding: (Full: 18);
+    Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 20);
+      Label #MemberName {
+        Text: "Username";
+        Style: (FontSize: 16, TextColor: #ffffff(0.92), RenderBold: true);
+        FlexWeight: 1;
+      }
+      Label #MemberRank {
+        Text: "MEMBER";
+        Anchor: (Width: 90, Height: 20);
+        Style: (FontSize: 12, TextColor: #b4c8c9(0.75), HorizontalAlignment: End);
+      }
+    }
+
+    Group { Anchor: (Height: 6); }
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 32);
+
+      $C.@SmallSecondaryTextButton #OwnerButton {
+        @Text = "Owner";
+        @Anchor = (Width: 80);
+      }
+
+      Group { Anchor: (Width: 6, Height: 32); }
+
+      $C.@SmallSecondaryTextButton #PromoteButton {
+        @Text = "+";
+        @Anchor = (Width: 60);
+      }
+
+      Group { Anchor: (Width: 6, Height: 32); }
+
+      $C.@SmallSecondaryTextButton #DemoteButton {
+        @Text = "-";
+        @Anchor = (Width: 60);
+      }
+
+      Group { Anchor: (Width: 6, Height: 32); }
+
+      $C.@SmallSecondaryTextButton #KickButton {
+        @Text = "Kick";
+        @Anchor = (Width: 90);
+      }
+    }
+  }
+}

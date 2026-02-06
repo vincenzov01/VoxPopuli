@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.veim.voxpopuli.database.MessageServices
 import com.veim.voxpopuli.database.UserServices
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
+import com.veim.voxpopuli.util.InventoryUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -74,6 +75,7 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 		evt: UIEventBuilder
 	) {
 		cmd.clear(page.tabSel("#MessageList"))
+		val allowDelete = page.configSnapshot.messages.allowDelete
 
 		val user = getOrCreateUser(page) ?: return
 		val messages = MessageServices.getMessagesForUser(user.id)
@@ -91,6 +93,7 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 			cmd.set("$selector #MessageSender.Text", header)
 			cmd.set("$selector #MessageTimestamp.Text", dateFormat.format(Date(message.timestamp)))
 			cmd.set("$selector #MessageContent.Text", message.content)
+			cmd.set("$selector #DeleteButton.Visible", allowDelete)
 
 			evt.addEventBinding(
 				CustomUIEventBindingType.Activating,
@@ -98,12 +101,14 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 				page.uiEventData(action = "reply", postId = message.id),
 				false
 			)
-			evt.addEventBinding(
-				CustomUIEventBindingType.Activating,
-				"$selector #DeleteButton",
-				page.uiEventData(action = "delete_message", postId = message.id),
-				false
-			)
+			if (allowDelete) {
+				evt.addEventBinding(
+					CustomUIEventBindingType.Activating,
+					"$selector #DeleteButton",
+					page.uiEventData(action = "delete_message", postId = message.id),
+					false
+				)
+			}
 		}
 
 		// Keep inputs in sync (useful when switching tabs)
@@ -129,10 +134,17 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 				return true
 			}
 			"send_message" -> {
+				val config = page.configSnapshot.messages
 				val sender = getOrCreateUser(page) ?: return true
 				val recipientName = (data.recipient.ifBlank { page.draftMessageRecipient }).trim()
 				val content = (data.message.ifBlank { page.draftMessageText }).trim()
 				if (recipientName.isBlank() || content.isBlank()) return true
+
+				if (config.requireItemToSend) {
+					val requiredItemId = config.requiredItemIdToSend.trim()
+					val hasItem = InventoryUtil.playerHasItemId(store, ref, requiredItemId)
+					if (hasItem != true) return true
+				}
 
 				val receiver = UserServices.getUserByUsername(recipientName) ?: UserServices.createUser(recipientName)
 				if (receiver != null) {
@@ -162,6 +174,7 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 				return true
 			}
 			"delete_message" -> {
+				if (!page.configSnapshot.messages.allowDelete) return true
 				val user = getOrCreateUser(page) ?: return true
 				val messageId = data.postId
 				if (messageId < 0) return true

@@ -10,6 +10,7 @@ import com.veim.voxpopuli.database.GuildRank
 import com.veim.voxpopuli.database.GuildServices
 import com.veim.voxpopuli.database.UserServices
 import com.veim.voxpopuli.ui.VoxPopuliDashboardPage
+import com.veim.voxpopuli.util.InventoryUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -218,6 +219,10 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 		cmd: UICommandBuilder,
 		evt: UIEventBuilder
 	) {
+		val boardConfig = page.configSnapshot.guildBoard
+		cmd.set(page.tabSel("#GuildBoardInput.Visible"), boardConfig.allowPost)
+		cmd.set(page.tabSel("#SendGuildBoardButton.Visible"), boardConfig.allowPost)
+
 		// Keep inputs in sync
 		cmd.set(page.tabSel("#CreateGuildNameInput.Value"), page.draftCreateGuildName)
 		cmd.set(page.tabSel("#InviteMemberInput.Value"), page.draftInviteMemberUsername)
@@ -332,11 +337,18 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				return true
 			}
 			"create_guild" -> {
+				val guildConfig = page.configSnapshot.guilds
 				val user = getOrCreateUser(page) ?: return true
 				if (user.guildId != null) return true
 				val name = (data.guildName.ifBlank { page.draftCreateGuildName }).trim()
 				if (name.isBlank()) return true
 				if (GuildServices.getGuildByName(name) != null) return true
+
+				if (guildConfig.requireItemToCreate) {
+					val requiredItemId = guildConfig.requiredItemIdToCreate.trim()
+					val hasItem = InventoryUtil.playerHasItemId(store, ref, requiredItemId)
+					if (hasItem != true) return true
+				}
 
 				GuildServices.createGuild(name, user.id)
 				page.draftCreateGuildName = ""
@@ -471,10 +483,18 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 				return true
 			}
 			"send_guild_board" -> {
+				val boardConfig = page.configSnapshot.guildBoard
+				if (!boardConfig.allowPost) return true
 				val user = getOrCreateUser(page) ?: return true
 				val guild = user.guildId?.let { GuildServices.getGuildById(it) } ?: return true
 				val content = (data.boardText.ifBlank { page.draftGuildBoardText }).trim()
 				if (content.isBlank()) return true
+
+				if (boardConfig.requireItemToPost) {
+					val requiredItemId = boardConfig.requiredItemIdToPost.trim()
+					val hasItem = InventoryUtil.playerHasItemId(store, ref, requiredItemId)
+					if (hasItem != true) return true
+				}
 
 				GuildServices.addBoardMessage(guild.id, user.id, content)
 				page.draftGuildBoardText = ""
