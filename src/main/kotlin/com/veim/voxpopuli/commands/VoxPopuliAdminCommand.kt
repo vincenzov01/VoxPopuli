@@ -102,9 +102,9 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
                 }
             }
 
-            val target = UserServices.getUserByUsername(targetUsername) ?: UserServices.createUser(targetUsername)
+            val target = UserServices.getUserByUsername(targetUsername)
             if (target == null) {
-                commandContext.sendMessage(Message.raw("Impossibile creare/trovare l'utente '$targetUsername'."))
+                commandContext.sendMessage(Message.raw("Utente '$targetUsername' non trovato."))
                 return
             }
 

@@ -234,6 +234,39 @@ Group {
             LayoutMode: Top;
             Anchor: (Left: 0, Right: 0);
 
+            // --- LOGS ---
+            @Card {
+              @Title = "LOGS";
+              #Content {
+                Group #RowLogsMaxFileMB {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Dimensione max file log (MB)";
+                    #ValueSlot {
+                      $C.@TextField #LogsMaxFileMBInput {
+                        PlaceholderText: "Max log file size in MB";
+                        Anchor: (Full: 0);
+                      }
+                    }
+                  }
+                }
+                Group { Anchor: (Height: 6); }
+                Group #RowLogsMaxFilesToKeep {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Numero max file log";
+                    #ValueSlot {
+                      $C.@TextField #LogsMaxFilesToKeepInput {
+                        PlaceholderText: "Number of log files to keep";
+                        Anchor: (Full: 0);
+                      }
+                    }
+                  }
+                }
+                Group { Anchor: (Height: 12); }
+              }
+            }
+
             // --- TABS ---
             @Card {
               @Title = "TAB";

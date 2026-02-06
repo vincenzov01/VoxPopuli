@@ -32,6 +32,11 @@ Group #MissiveContent {
       @Anchor = (Width: 160);
     }
   }
+  Label #SendMessageStatusLabel {
+    Text: "";
+    Anchor: (Left: 0, Right: 0, Height: 18);
+    Style: $C.@StatusLabelStyle;
+  }
   Group { Anchor: (Height: 10); }
   // Lista messaggi
   Group {

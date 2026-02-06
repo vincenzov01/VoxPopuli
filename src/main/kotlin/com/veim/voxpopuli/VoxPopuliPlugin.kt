@@ -24,7 +24,13 @@ class VoxPopuliPlugin(init: JavaPluginInit) : JavaPlugin(init) {
     @Volatile
     private var runtimeConfig: VoxPopuliConfig = VoxPopuliConfig()
 
+
     fun config(): VoxPopuliConfig = runtimeConfig
+
+    /** Aggiorna la config dei log custom ogni volta che la config viene caricata o aggiornata */
+    private fun updateLogConfig() {
+        com.veim.voxpopuli.util.FileAuditLog.updateConfig(runtimeConfig.logs)
+    }
 
     fun saveConfig(config: VoxPopuliConfig) {
         // Single source of truth: DB.
@@ -32,6 +38,7 @@ class VoxPopuliPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         val toSave = config.copy(database = config.database.copy(path = dbPath))
         runtimeConfig = toSave
         VoxPopuliDbConfigStore.save(toSave)
+        updateLogConfig()
     }
 
     init {
@@ -49,6 +56,7 @@ class VoxPopuliPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         // Load config from DB (or seed from defaults).
         val loaded = VoxPopuliDbConfigStore.loadOrInit(VoxPopuliConfig())
         runtimeConfig = loaded.config.copy(database = loaded.config.database.copy(path = dbPath))
+        updateLogConfig()
 
         // Il plugin deve collegarsi al comando: registriamo solo un comando base.
         registerCommands()

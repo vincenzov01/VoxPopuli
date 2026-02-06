@@ -43,6 +43,6 @@ abstract class BaseVoxTab(
 
     protected fun getOrCreateUser(page: VoxPopuliDashboardPage): User? {
         val username = page.player.username
-        return UserServices.getUserByUsername(username) ?: UserServices.createUser(username)
+        return UserServices.getUserByUsername(username)
     }
 }

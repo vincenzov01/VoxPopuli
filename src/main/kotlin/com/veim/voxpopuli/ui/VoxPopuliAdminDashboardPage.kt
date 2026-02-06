@@ -159,6 +159,8 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                     "MessagesRequiredItemIdToSend" to "#MessagesRequiredItemIdToSendInput.Value",
                     "GuildBoardRequiredItemIdToPost" to "#GuildBoardRequiredItemIdToPostInput.Value",
                     "GuildsRequiredItemIdToCreate" to "#GuildsRequiredItemIdToCreateInput.Value",
+                    "LogsMaxFileMB" to "#LogsMaxFileMBInput.Value",
+                    "LogsMaxFilesToKeep" to "#LogsMaxFilesToKeepInput.Value",
                 )
             ),
             false
@@ -417,6 +419,10 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
         cmd.set("#LogsStatusLabel.Text", logsStatus)
         cmd.set("#LogsText.Text", logsText)
 
+        // Config logs (valori attuali nei campi input)
+        cmd.set("#LogsMaxFileMBInput.Value", configSnapshot.logs.maxFileMB.toString())
+        cmd.set("#LogsMaxFilesToKeepInput.Value", configSnapshot.logs.maxFilesToKeep.toString())
+
         cmd.set("#SaveStatusLabel.Text", statusMessage)
         cmd.set("#PostsStatusLabel.Text", postsStatus)
         cmd.set("#MessagesStatusLabel.Text", messagesStatus)
@@ -449,7 +455,7 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
             data.guildsRequiredItemIdToCreate
         )
 
-        val user = UserServices.getUserByUsername(player.username) ?: UserServices.createUser(player.username)
+        val user = UserServices.getUserByUsername(player.username)
         if (user == null) {
             statusMessage = "Errore: utente non trovato nel DB"
             val cmd = UICommandBuilder()
@@ -542,6 +548,12 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                 configSnapshot.guildBoard.requiredItemIdToPost = data.guildBoardRequiredItemIdToPost.trim()
                 configSnapshot.guilds.requiredItemIdToCreate = data.guildsRequiredItemIdToCreate.trim()
 
+                // LOGS: aggiorna i valori dalla UI
+                val maxFileMB = data.logsMaxFileMB.trim().toIntOrNull()?.coerceIn(1, 1000) ?: 5
+                val maxFilesToKeep = data.logsMaxFilesToKeep.trim().toIntOrNull()?.coerceIn(1, 1000) ?: 50
+                configSnapshot.logs.maxFileMB = maxFileMB
+                configSnapshot.logs.maxFilesToKeep = maxFilesToKeep
+
                 plugin.saveConfig(configSnapshot)
                 configSnapshot = plugin.config()
                 statusMessage = "Salvato nel DB"
@@ -564,6 +576,8 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
                         "guildBoard.requiredItemIdToPost" to configSnapshot.guildBoard.requiredItemIdToPost,
                         "guilds.requireItemToCreate" to configSnapshot.guilds.requireItemToCreate.toString(),
                         "guilds.requiredItemIdToCreate" to configSnapshot.guilds.requiredItemIdToCreate,
+                        "logs.maxFileMB" to configSnapshot.logs.maxFileMB.toString(),
+                        "logs.maxFilesToKeep" to configSnapshot.logs.maxFilesToKeep.toString(),
                     )
                 )
             }
@@ -754,6 +768,8 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
         var messagesRequiredItemIdToSend: String = "",
         var guildBoardRequiredItemIdToPost: String = "",
         var guildsRequiredItemIdToCreate: String = "",
+        var logsMaxFileMB: String = "",
+        var logsMaxFilesToKeep: String = "",
     ) {
         companion object {
             val CODEC: BuilderCodec<EventData> = BuilderCodec.builder(EventData::class.java, ::EventData)
@@ -774,6 +790,11 @@ class VoxPopuliAdminDashboardPage(playerRef: PlayerRef) : InteractiveCustomUIPag
 
                 .append(KeyedCodec("GuildsRequiredItemIdToCreate", Codec.STRING), { e, v -> e.guildsRequiredItemIdToCreate = v }, { e -> e.guildsRequiredItemIdToCreate }).add()
                 .append(KeyedCodec("@GuildsRequiredItemIdToCreate", Codec.STRING), { e, v -> e.guildsRequiredItemIdToCreate = v }, { e -> e.guildsRequiredItemIdToCreate }).add()
+
+                .append(KeyedCodec("LogsMaxFileMB", Codec.STRING), { e, v -> e.logsMaxFileMB = v }, { e -> e.logsMaxFileMB }).add()
+                .append(KeyedCodec("@LogsMaxFileMB", Codec.STRING), { e, v -> e.logsMaxFileMB = v }, { e -> e.logsMaxFileMB }).add()
+                .append(KeyedCodec("LogsMaxFilesToKeep", Codec.STRING), { e, v -> e.logsMaxFilesToKeep = v }, { e -> e.logsMaxFilesToKeep }).add()
+                .append(KeyedCodec("@LogsMaxFilesToKeep", Codec.STRING), { e, v -> e.logsMaxFilesToKeep = v }, { e -> e.logsMaxFilesToKeep }).add()
 
                 .build()
         }

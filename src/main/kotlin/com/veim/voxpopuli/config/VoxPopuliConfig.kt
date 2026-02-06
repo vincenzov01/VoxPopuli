@@ -13,7 +13,14 @@ data class VoxPopuliConfig(
     var messages: Messages = Messages(),
     var guilds: Guilds = Guilds(),
     var guildBoard: GuildBoard = GuildBoard(),
+    var logs: Logs = Logs(),
 ) {
+    data class Logs(
+        /** Dimensione massima di un file di log, in megabyte (user-friendly). */
+        var maxFileMB: Int = 5,
+        /** Numero massimo di file di log da mantenere. */
+        var maxFilesToKeep: Int = 50,
+    )
     data class Database(
         /** SQLite db file path. Relative paths are resolved from the server working directory. */
         var path: String = "config/voxpopuli/voxpopuli.db",

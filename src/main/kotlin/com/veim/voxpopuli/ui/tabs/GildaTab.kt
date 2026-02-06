@@ -374,8 +374,12 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 
 				val targetName = (data.memberName.ifBlank { page.draftInviteMemberUsername }).trim()
 				if (targetName.isBlank()) return true
-				val target = UserServices.getUserByUsername(targetName) ?: UserServices.createUser(targetName)
-				if (target == null) return true
+				val target = UserServices.getUserByUsername(targetName)
+				if (target == null) {
+					cmd.set(page.tabSel("#InviteMemberStatusLabel.Text"), "Utente non trovato")
+					apply(cmd)
+					return true
+				}
 				if (target.guildId != null) return true
 
 				GuildServices.addMember(guild.id, target.id, GuildRank.MEMBER)

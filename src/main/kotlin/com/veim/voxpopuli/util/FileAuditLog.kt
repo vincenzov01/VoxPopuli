@@ -16,8 +16,17 @@ object FileAuditLog {
     private val gson: Gson = GsonBuilder().disableHtmlEscaping().create()
     private val lock = Any()
 
-    private const val MAX_FILE_BYTES: Long = 5L * 1024L * 1024L // 5 MiB
-    private const val MAX_FILES_TO_KEEP: Int = 50
+    // Questi valori sono aggiornabili da config
+    @Volatile
+    private var maxFileBytes: Long = 5L * 1024L * 1024L // default 5 MiB
+    @Volatile
+    private var maxFilesToKeep: Int = 50
+
+    /** Da chiamare quando la config viene caricata o aggiornata */
+    fun updateConfig(logs: com.veim.voxpopuli.config.VoxPopuliConfig.Logs) {
+        maxFileBytes = (logs.maxFileMB.coerceAtLeast(1)).toLong() * 1024L * 1024L
+        maxFilesToKeep = logs.maxFilesToKeep.coerceAtLeast(1)
+    }
 
     private val logsDir: Path = Path.of("config", "voxpopuli", "logs")
     private val sessionId: String = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")
@@ -133,8 +142,8 @@ object FileAuditLog {
 
     private fun cleanupOldFilesLocked() {
         val files = listAuditFilesNewestFirst()
-        if (files.size <= MAX_FILES_TO_KEEP) return
-        files.drop(MAX_FILES_TO_KEEP).forEach { path ->
+        if (files.size <= maxFilesToKeep) return
+        files.drop(maxFilesToKeep).forEach { path ->
             try {
                 Files.deleteIfExists(path)
             } catch (_: Exception) {
@@ -157,7 +166,7 @@ object FileAuditLog {
             } catch (_: Exception) {
                 0L
             }
-            if (size + extraBytesToWrite <= MAX_FILE_BYTES) return
+            if (size + extraBytesToWrite <= maxFileBytes) return
             activeIndex++
         }
     }

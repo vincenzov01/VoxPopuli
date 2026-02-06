@@ -147,22 +147,26 @@ object MissiveTab : BaseVoxTab(id = "missive", title = "Missive") {
 					if (hasItem != true) return true
 				}
 
-				val receiver = UserServices.getUserByUsername(recipientName) ?: UserServices.createUser(recipientName)
-				if (receiver != null) {
-					FileAuditLog.logUserAction(
-						actorUsername = page.player.username,
-						actorUserId = sender.id,
-						action = "message.send",
-						targetUserId = receiver.id,
-						details = mapOf(
-							"receiverUsername" to receiver.username,
-							"contentLen" to content.length.toString(),
-						),
-					)
-					MessageServices.sendMessage(sender.id, receiver.id, content)
-					page.draftMessageText = ""
-					cmd.set(page.tabSel("#MessageTextInput.Value"), "")
+				val receiver = UserServices.getUserByUsername(recipientName)
+				if (receiver == null) {
+					// Mostra errore nella UI
+					cmd.set(page.tabSel("#SendMessageStatusLabel.Text"), "Destinatario non trovato")
+					apply(cmd)
+					return true
 				}
+				FileAuditLog.logUserAction(
+					actorUsername = page.player.username,
+					actorUserId = sender.id,
+					action = "message.send",
+					targetUserId = receiver.id,
+					details = mapOf(
+						"receiverUsername" to receiver.username,
+						"contentLen" to content.length.toString(),
+					),
+				)
+				MessageServices.sendMessage(sender.id, receiver.id, content)
+				page.draftMessageText = ""
+				cmd.set(page.tabSel("#MessageTextInput.Value"), "")
 
 				apply(cmd)
 				render(page, ref, store, cmd, evt)
