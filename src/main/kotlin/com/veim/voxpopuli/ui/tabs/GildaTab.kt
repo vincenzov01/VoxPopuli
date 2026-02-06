@@ -241,7 +241,6 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 
 		if (guild == null) {
 			cmd.set(page.tabSel("#GuildName.Text"), "Nessuna gilda")
-			cmd.set(page.tabSel("#GuildRole.Text"), "")
 
 			cmd.set(page.tabSel("#GuildMembersSection.Visible"), false)
 			cmd.set(page.tabSel("#GuildBoardSection.Visible"), false)
@@ -261,7 +260,6 @@ object GildaTab : BaseVoxTab(id = "gilda", title = "Gilda") {
 
 		val selfRank = guild.members.firstOrNull { it.userId == user.id }?.rank ?: GuildRank.MEMBER
 		cmd.set(page.tabSel("#GuildName.Text"), guild.name)
-		cmd.set(page.tabSel("#GuildRole.Text"), "Ruolo: ${selfRank.name}")
 
 		val canManage = selfRank == GuildRank.OWNER || selfRank == GuildRank.OFFICER
 
