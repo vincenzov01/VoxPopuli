@@ -1,6 +1,7 @@
 $C = "../Common.ui";
 
 // --- MISSIVE (Messaggi privati) ---
+@PanelBg = #10151e(0.7);
 Group #MissiveContent {
   FlexWeight: 1;
   LayoutMode: Top;
@@ -36,8 +37,9 @@ Group #MissiveContent {
   Group {
     FlexWeight: 1;
     LayoutMode: TopScrolling;
+    ScrollbarStyle: $C.@DefaultScrollbarStyle;
     Anchor: (Left: 0, Right: 0);
-    Background: #10151e(0.7);
+    Background: @PanelBg;
     Padding: (Full: 8);
 
     Group #MessageList {

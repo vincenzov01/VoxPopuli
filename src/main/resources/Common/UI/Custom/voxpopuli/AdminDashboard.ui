@@ -2,6 +2,121 @@ $C = "../Common.ui";
 
 // Admin UI uses flat colors (no parchment textures)
 
+@PanelBg = #10151e(0.7);
+@CardBg = #10151e(0.85);
+
+@SidebarUsernameStyle = LabelStyle(FontSize: 18, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+@SidebarRoleStyle = LabelStyle(FontSize: 12, TextColor: #b4c8c9, HorizontalAlignment: Center, VerticalAlignment: Center);
+@ContentTitleStyle = LabelStyle(FontSize: 20, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+
+@CardHeaderStyle = LabelStyle(FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
+@RowLabelStyle = LabelStyle(FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
+@RowValueStyle = LabelStyle(FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
+@StatusLabelStyle = LabelStyle(FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+@HintLabelStyle = LabelStyle(FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center, HorizontalAlignment: End, Wrap: true);
+@NoteLabelStyle = LabelStyle(FontSize: 12, TextColor: #b4c8c9, Wrap: true);
+@LogsTextStyle = LabelStyle(FontSize: 12, TextColor: #e8f0f2(0.90), Wrap: true);
+
+@Card = Group {
+  @Title = "";
+
+  LayoutMode: Top;
+  Background: @CardBg;
+  Padding: (Full: 18);
+  Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
+
+  Label {
+    Text: @Title;
+    Anchor: (Height: 22);
+    Style: @CardHeaderStyle;
+  }
+  Group { Anchor: (Height: 8); }
+
+  Group #Content {
+    LayoutMode: Top;
+    Anchor: (Left: 0, Right: 0);
+  }
+};
+
+@ToggleRowInner = Group {
+  @LabelText = "";
+
+  LayoutMode: Left;
+  Anchor: (Full: 0);
+
+  Label {
+    Text: @LabelText;
+    FlexWeight: 1;
+    Style: @RowLabelStyle;
+  }
+
+  Group #ValueSlot {
+    Anchor: (Width: 50, Height: 38);
+  }
+
+  Group #ButtonSlot {
+    Anchor: (Width: 120, Height: 38);
+  }
+};
+
+@ItemIdRowInner = Group {
+  @HintText = "Usato solo se ON";
+
+  LayoutMode: Left;
+  Anchor: (Full: 0);
+
+  Group #InputSlot {
+    FlexWeight: 1;
+    Anchor: (Height: 38);
+  }
+
+  Group { Anchor: (Width: 12, Height: 44); }
+
+  Label {
+    Text: @HintText;
+    Anchor: (Width: 160, Height: 44);
+    Style: @HintLabelStyle;
+  }
+};
+
+@SingleActionBarInner = Group {
+  LayoutMode: Left;
+  Anchor: (Full: 0);
+
+  Group #ButtonSlot {
+    Anchor: (Width: 180, Height: 44);
+  }
+
+  Group { Anchor: (Width: 12, Height: 44); }
+
+  Group #StatusSlot {
+    FlexWeight: 1;
+    Anchor: (Height: 44);
+  }
+};
+
+@DualActionBarInner = Group {
+  LayoutMode: Left;
+  Anchor: (Full: 0);
+
+  Group #Button1Slot {
+    Anchor: (Width: 180, Height: 44);
+  }
+
+  Group { Anchor: (Width: 12, Height: 44); }
+
+  Group #Button2Slot {
+    Anchor: (Width: 180, Height: 44);
+  }
+
+  Group { Anchor: (Width: 12, Height: 44); }
+
+  Group #StatusSlot {
+    FlexWeight: 1;
+    Anchor: (Height: 44);
+  }
+};
+
 Group {
   Anchor: (Full: 0);
   Background: #141c26(0);
@@ -18,13 +133,13 @@ Group {
       Label #Username {
         Text: "Username";
         Anchor: (Left: 0, Right: 0, Height: 31);
-        Style: (FontSize: 18, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+        Style: @SidebarUsernameStyle;
       }
 
       Label #RoleRole {
         Text: "Admin";
         Anchor: (Top: 31, Left: 0, Right: 0, Height: 20);
-        Style: (FontSize: 12, TextColor: #b4c8c9, HorizontalAlignment: Center, VerticalAlignment: Center);
+        Style: @SidebarRoleStyle;
       }
     }
 
@@ -91,7 +206,7 @@ Group {
       Label #ContentTitle {
         Text: "VoxPopuli Admin";
         Anchor: (Left: 0, Right: 0, Height: 31);
-        Style: (FontSize: 20, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+        Style: @ContentTitleStyle;
       }
     }
 
@@ -110,8 +225,9 @@ Group {
         Group {
           FlexWeight: 1;
           LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
           Anchor: (Left: 0, Right: 0);
-          Background: #10151e(0.7);
+          Background: @PanelBg;
           Padding: (Full: 10);
 
           Group #AdminConfigList {
@@ -119,366 +235,304 @@ Group {
             Anchor: (Left: 0, Right: 0);
 
             // --- TABS ---
-            Group {
-              LayoutMode: Top;
-              Background: #10151e(0.85);
-              Padding: (Full: 18);
-              Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
+            @Card {
+              @Title = "TAB";
+              #Content {
+                Group #RowTabsCronache {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Cronache";
+                    #ValueSlot {
+                      Label #TabsCronacheValue {
+                        Text: "ON";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #ToggleTabsCronacheButton {
+                        @Text = "Disabilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
+                }
 
-              Label {
-                Text: "TAB";
-                Anchor: (Height: 22);
-                Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
-              }
-              Group { Anchor: (Height: 8); }
+                Group { Anchor: (Height: 6); }
 
-              Group #RowTabsCronache {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Cronache";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
+                Group #RowTabsMissive {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Missive";
+                    #ValueSlot {
+                      Label #TabsMissiveValue {
+                        Text: "ON";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #ToggleTabsMissiveButton {
+                        @Text = "Disabilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
                 }
-                Label #TabsCronacheValue {
-                  Text: "ON";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleTabsCronacheButton {
-                  @Text = "Disabilita";
-                  @Anchor = (Width: 120);
-                }
-              }
 
-              Group { Anchor: (Height: 6); }
+                Group { Anchor: (Height: 6); }
 
-              Group #RowTabsMissive {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Missive";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
-                }
-                Label #TabsMissiveValue {
-                  Text: "ON";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleTabsMissiveButton {
-                  @Text = "Disabilita";
-                  @Anchor = (Width: 120);
-                }
-              }
-
-              Group { Anchor: (Height: 6); }
-
-              Group #RowTabsGilda {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Gilda";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
-                }
-                Label #TabsGildaValue {
-                  Text: "ON";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleTabsGildaButton {
-                  @Text = "Disabilita";
-                  @Anchor = (Width: 120);
+                Group #RowTabsGilda {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Gilda";
+                    #ValueSlot {
+                      Label #TabsGildaValue {
+                        Text: "ON";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #ToggleTabsGildaButton {
+                        @Text = "Disabilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
                 }
               }
             }
 
             // --- MESSAGES ---
-            Group {
-              LayoutMode: Top;
-              Background: #10151e(0.85);
-              Padding: (Full: 18);
-              Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
-
-              Label {
-                Text: "MISSIVE";
-                Anchor: (Height: 22);
-                Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
-              }
-              Group { Anchor: (Height: 8); }
-
-              Group #RowMessagesAllowDelete {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Consenti eliminazione";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
+            @Card {
+              @Title = "MISSIVE";
+              #Content {
+                Group #RowMessagesAllowDelete {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Consenti eliminazione";
+                    #ValueSlot {
+                      Label #MessagesAllowDeleteValue {
+                        Text: "ON";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #ToggleMessagesAllowDeleteButton {
+                        @Text = "Disabilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
                 }
-                Label #MessagesAllowDeleteValue {
-                  Text: "ON";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleMessagesAllowDeleteButton {
-                  @Text = "Disabilita";
-                  @Anchor = (Width: 120);
-                }
-              }
 
               Group { Anchor: (Height: 6); }
 
               Group #RowMessagesRequireItemToSend {
-                LayoutMode: Left;
                 Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Richiedi oggetto per inviare";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
-                }
-                Label #MessagesRequireItemToSendValue {
-                  Text: "OFF";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleMessagesRequireItemToSendButton {
-                  @Text = "Abilita";
-                  @Anchor = (Width: 120);
+                @ToggleRowInner {
+                  @LabelText = "Richiedi oggetto per inviare";
+                  #ValueSlot {
+                    Label #MessagesRequireItemToSendValue {
+                      Text: "OFF";
+                      Anchor: (Full: 0);
+                      Style: @RowValueStyle;
+                    }
+                  }
+                  #ButtonSlot {
+                    $C.@SecondaryTextButton #ToggleMessagesRequireItemToSendButton {
+                      @Text = "Abilita";
+                      @Anchor = (Full: 0);
+                    }
+                  }
                 }
               }
 
               Group { Anchor: (Height: 6); }
 
               Group #MessagesRequiredItemIdToSendRow {
-                LayoutMode: Left;
                 Anchor: (Left: 0, Right: 0, Height: 44);
-
-                $C.@TextField #MessagesRequiredItemIdToSendInput {
-                  FlexWeight: 1;
-                  Anchor: (Height: 38);
-                  PlaceholderText: "Item id (es: hytale:paper)";
+                @ItemIdRowInner {
+                  #InputSlot {
+                    $C.@TextField #MessagesRequiredItemIdToSendInput {
+                      Anchor: (Full: 0);
+                      PlaceholderText: "Item id (es: hytale:paper)";
+                    }
+                  }
                 }
-
-                Group { Anchor: (Width: 12, Height: 44); }
-
-                Label {
-                  Text: "Usato solo se ON";
-                  Anchor: (Width: 160, Height: 44);
-                  Style: (FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center, HorizontalAlignment: End, Wrap: true);
-                }
+              }
               }
             }
 
             // --- POSTS ---
-            Group {
-              LayoutMode: Top;
-              Background: #10151e(0.85);
-              Padding: (Full: 18);
-              Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
-
-              Label {
-                Text: "POST";
-                Anchor: (Height: 22);
-                Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
-              }
-              Group { Anchor: (Height: 8); }
-
-              Group #RowPostsRequireItemToPost {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Richiedi oggetto per pubblicare";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
+            @Card {
+              @Title = "POST";
+              #Content {
+                Group #RowPostsRequireItemToPost {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Richiedi oggetto per pubblicare";
+                    #ValueSlot {
+                      Label #PostsRequireItemToPostValue {
+                        Text: "OFF";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #TogglePostsRequireItemToPostButton {
+                        @Text = "Abilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
                 }
-                Label #PostsRequireItemToPostValue {
-                  Text: "OFF";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #TogglePostsRequireItemToPostButton {
-                  @Text = "Abilita";
-                  @Anchor = (Width: 120);
-                }
-              }
 
               Group { Anchor: (Height: 6); }
 
               Group #PostsRequiredItemIdToPostRow {
-                LayoutMode: Left;
                 Anchor: (Left: 0, Right: 0, Height: 44);
-
-                $C.@TextField #PostsRequiredItemIdToPostInput {
-                  FlexWeight: 1;
-                  Anchor: (Height: 38);
-                  PlaceholderText: "Item id (es: hytale:paper)";
+                @ItemIdRowInner {
+                  #InputSlot {
+                    $C.@TextField #PostsRequiredItemIdToPostInput {
+                      Anchor: (Full: 0);
+                      PlaceholderText: "Item id (es: hytale:paper)";
+                    }
+                  }
                 }
-
-                Group { Anchor: (Width: 12, Height: 44); }
-
-                Label {
-                  Text: "Usato solo se ON";
-                  Anchor: (Width: 160, Height: 44);
-                  Style: (FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center, HorizontalAlignment: End, Wrap: true);
-                }
+              }
               }
             }
 
             // --- GUILD BOARD ---
-            Group {
-              LayoutMode: Top;
-              Background: #10151e(0.85);
-              Padding: (Full: 18);
-              Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
-
-              Label {
-                Text: "BACHECA GILDA";
-                Anchor: (Height: 22);
-                Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
-              }
-              Group { Anchor: (Height: 8); }
-
-              Group #RowGuildBoardAllowPost {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Consenti post";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
+            @Card {
+              @Title = "BACHECA GILDA";
+              #Content {
+                Group #RowGuildBoardAllowPost {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Consenti post";
+                    #ValueSlot {
+                      Label #GuildBoardAllowPostValue {
+                        Text: "ON";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #ToggleGuildBoardAllowPostButton {
+                        @Text = "Disabilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
                 }
-                Label #GuildBoardAllowPostValue {
-                  Text: "ON";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleGuildBoardAllowPostButton {
-                  @Text = "Disabilita";
-                  @Anchor = (Width: 120);
-                }
-              }
 
               Group { Anchor: (Height: 6); }
 
               Group #RowGuildBoardRequireItemToPost {
-                LayoutMode: Left;
                 Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Richiedi oggetto per postare";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
-                }
-                Label #GuildBoardRequireItemToPostValue {
-                  Text: "OFF";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleGuildBoardRequireItemToPostButton {
-                  @Text = "Abilita";
-                  @Anchor = (Width: 120);
+                @ToggleRowInner {
+                  @LabelText = "Richiedi oggetto per postare";
+                  #ValueSlot {
+                    Label #GuildBoardRequireItemToPostValue {
+                      Text: "OFF";
+                      Anchor: (Full: 0);
+                      Style: @RowValueStyle;
+                    }
+                  }
+                  #ButtonSlot {
+                    $C.@SecondaryTextButton #ToggleGuildBoardRequireItemToPostButton {
+                      @Text = "Abilita";
+                      @Anchor = (Full: 0);
+                    }
+                  }
                 }
               }
 
               Group { Anchor: (Height: 6); }
 
               Group #GuildBoardRequiredItemIdToPostRow {
-                LayoutMode: Left;
                 Anchor: (Left: 0, Right: 0, Height: 44);
-
-                $C.@TextField #GuildBoardRequiredItemIdToPostInput {
-                  FlexWeight: 1;
-                  Anchor: (Height: 38);
-                  PlaceholderText: "Item id (es: hytale:book)";
+                @ItemIdRowInner {
+                  #InputSlot {
+                    $C.@TextField #GuildBoardRequiredItemIdToPostInput {
+                      Anchor: (Full: 0);
+                      PlaceholderText: "Item id (es: hytale:book)";
+                    }
+                  }
                 }
-
-                Group { Anchor: (Width: 12, Height: 44); }
-
-                Label {
-                  Text: "Usato solo se ON";
-                  Anchor: (Width: 160, Height: 44);
-                  Style: (FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center, HorizontalAlignment: End, Wrap: true);
-                }
+              }
               }
             }
 
             // --- GUILDS ---
-            Group {
-              LayoutMode: Top;
-              Background: #10151e(0.85);
-              Padding: (Full: 18);
-              Anchor: (Left: 6, Right: 6, Top: 6, Bottom: 6);
-
-              Label {
-                Text: "GILDE";
-                Anchor: (Height: 22);
-                Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
-              }
-              Group { Anchor: (Height: 8); }
-
-              Group #RowGuildsRequireItemToCreate {
-                LayoutMode: Left;
-                Anchor: (Left: 0, Right: 0, Height: 38);
-                Label {
-                  Text: "Richiedi oggetto per creare";
-                  FlexWeight: 1;
-                  Style: (FontSize: 14, TextColor: #e8f0f2(0.92), VerticalAlignment: Center);
+            @Card {
+              @Title = "GILDE";
+              #Content {
+                Group #RowGuildsRequireItemToCreate {
+                  Anchor: (Left: 0, Right: 0, Height: 38);
+                  @ToggleRowInner {
+                    @LabelText = "Richiedi oggetto per creare";
+                    #ValueSlot {
+                      Label #GuildsRequireItemToCreateValue {
+                        Text: "OFF";
+                        Anchor: (Full: 0);
+                        Style: @RowValueStyle;
+                      }
+                    }
+                    #ButtonSlot {
+                      $C.@SecondaryTextButton #ToggleGuildsRequireItemToCreateButton {
+                        @Text = "Abilita";
+                        @Anchor = (Full: 0);
+                      }
+                    }
+                  }
                 }
-                Label #GuildsRequireItemToCreateValue {
-                  Text: "OFF";
-                  Anchor: (Width: 50, Height: 38);
-                  Style: (FontSize: 13, TextColor: #b4c8c9(0.92), HorizontalAlignment: Center, VerticalAlignment: Center);
-                }
-                $C.@SecondaryTextButton #ToggleGuildsRequireItemToCreateButton {
-                  @Text = "Abilita";
-                  @Anchor = (Width: 120);
-                }
-              }
 
               Group { Anchor: (Height: 6); }
 
               Group #GuildsRequiredItemIdToCreateRow {
-                LayoutMode: Left;
                 Anchor: (Left: 0, Right: 0, Height: 44);
-
-                $C.@TextField #GuildsRequiredItemIdToCreateInput {
-                  FlexWeight: 1;
-                  Anchor: (Height: 38);
-                  PlaceholderText: "Item id (es: hytale:paper)";
+                @ItemIdRowInner {
+                  #InputSlot {
+                    $C.@TextField #GuildsRequiredItemIdToCreateInput {
+                      Anchor: (Full: 0);
+                      PlaceholderText: "Item id (es: hytale:paper)";
+                    }
+                  }
                 }
-
-                Group { Anchor: (Width: 12, Height: 44); }
-
-                Label {
-                  Text: "Usato solo se ON";
-                  Anchor: (Width: 160, Height: 44);
-                  Style: (FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center, HorizontalAlignment: End, Wrap: true);
-                }
+              }
               }
             }
 
             // --- ACTIONS ---
             Group {
-              LayoutMode: Left;
               Anchor: (Left: 6, Right: 6, Height: 44);
+              @DualActionBarInner {
+                #Button1Slot {
+                  $C.@SecondaryTextButton #SaveConfigButton {
+                    @Text = "Salva";
+                    @Anchor = (Full: 0);
+                  }
+                }
 
-              $C.@SecondaryTextButton #SaveConfigButton {
-                @Text = "Salva";
-                @Anchor = (Width: 180);
-              }
+                #Button2Slot {
+                  $C.@TextButton #ReloadConfigButton {
+                    @Text = "Ricarica";
+                    @Anchor = (Full: 0);
+                  }
+                }
 
-              Group { Anchor: (Width: 12, Height: 44); }
-
-              $C.@TextButton #ReloadConfigButton {
-                @Text = "Ricarica";
-                @Anchor = (Width: 180);
-              }
-
-              Group { Anchor: (Width: 12, Height: 44); }
-
-              Label #SaveStatusLabel {
-                Text: "";
-                FlexWeight: 1;
-                Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+                #StatusSlot {
+                  Label #SaveStatusLabel {
+                    Text: "";
+                    Anchor: (Full: 0);
+                    Style: @StatusLabelStyle;
+                  }
+                }
               }
             }
 
@@ -487,7 +541,7 @@ Group {
             Label {
               Text: "Nota: la configurazione viene salvata solo nel DB (config/voxpopuli/voxpopuli.db).";
               Anchor: (Left: 6, Right: 6, Height: 32);
-              Style: (FontSize: 12, TextColor: #b4c8c9, Wrap: true);
+              Style: @NoteLabelStyle;
             }
           }
         }
@@ -502,20 +556,22 @@ Group {
         Visible: false;
 
         Group {
-          LayoutMode: Left;
           Anchor: (Left: 0, Right: 0, Height: 44);
+          @SingleActionBarInner {
+            #ButtonSlot {
+              $C.@SecondaryTextButton #RefreshLogsButton {
+                @Text = "Aggiorna";
+                @Anchor = (Full: 0);
+              }
+            }
 
-          $C.@SecondaryTextButton #RefreshLogsButton {
-            @Text = "Aggiorna";
-            @Anchor = (Width: 180);
-          }
-
-          Group { Anchor: (Width: 12, Height: 44); }
-
-          Label #LogsStatusLabel {
-            Text: "";
-            FlexWeight: 1;
-            Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+            #StatusSlot {
+              Label #LogsStatusLabel {
+                Text: "";
+                Anchor: (Full: 0);
+                Style: @StatusLabelStyle;
+              }
+            }
           }
         }
 
@@ -524,14 +580,15 @@ Group {
         Group {
           FlexWeight: 1;
           LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
           Anchor: (Left: 0, Right: 0);
-          Background: #10151e(0.7);
+          Background: @PanelBg;
           Padding: (Full: 8);
 
           Label #LogsText {
             Text: "";
             Anchor: (Left: 0, Right: 0, Height: 1400);
-            Style: (FontSize: 12, TextColor: #e8f0f2(0.90), Wrap: true);
+            Style: @LogsTextStyle;
           }
         }
       }
@@ -544,17 +601,21 @@ Group {
         Visible: false;
 
         Group {
-          LayoutMode: Left;
           Anchor: (Left: 0, Right: 0, Height: 44);
-          $C.@SecondaryTextButton #RefreshPostsButton {
-            @Text = "Aggiorna";
-            @Anchor = (Width: 180);
-          }
-          Group { Anchor: (Width: 12, Height: 44); }
-          Label #PostsStatusLabel {
-            Text: "";
-            FlexWeight: 1;
-            Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+          @SingleActionBarInner {
+            #ButtonSlot {
+              $C.@SecondaryTextButton #RefreshPostsButton {
+                @Text = "Aggiorna";
+                @Anchor = (Full: 0);
+              }
+            }
+            #StatusSlot {
+              Label #PostsStatusLabel {
+                Text: "";
+                Anchor: (Full: 0);
+                Style: @StatusLabelStyle;
+              }
+            }
           }
         }
 
@@ -563,8 +624,9 @@ Group {
         Group {
           FlexWeight: 1;
           LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
           Anchor: (Left: 0, Right: 0);
-          Background: #10151e(0.7);
+          Background: @PanelBg;
           Padding: (Full: 8);
 
           Group #AdminPostList {
@@ -582,17 +644,21 @@ Group {
         Visible: false;
 
         Group {
-          LayoutMode: Left;
           Anchor: (Left: 0, Right: 0, Height: 44);
-          $C.@SecondaryTextButton #RefreshMessagesButton {
-            @Text = "Aggiorna";
-            @Anchor = (Width: 180);
-          }
-          Group { Anchor: (Width: 12, Height: 44); }
-          Label #MessagesStatusLabel {
-            Text: "";
-            FlexWeight: 1;
-            Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+          @SingleActionBarInner {
+            #ButtonSlot {
+              $C.@SecondaryTextButton #RefreshMessagesButton {
+                @Text = "Aggiorna";
+                @Anchor = (Full: 0);
+              }
+            }
+            #StatusSlot {
+              Label #MessagesStatusLabel {
+                Text: "";
+                Anchor: (Full: 0);
+                Style: @StatusLabelStyle;
+              }
+            }
           }
         }
 
@@ -601,8 +667,9 @@ Group {
         Group {
           FlexWeight: 1;
           LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
           Anchor: (Left: 0, Right: 0);
-          Background: #10151e(0.7);
+          Background: @PanelBg;
           Padding: (Full: 8);
 
           Group #AdminMessageList {
@@ -620,17 +687,21 @@ Group {
         Visible: false;
 
         Group {
-          LayoutMode: Left;
           Anchor: (Left: 0, Right: 0, Height: 44);
-          $C.@SecondaryTextButton #RefreshGuildsButton {
-            @Text = "Aggiorna";
-            @Anchor = (Width: 180);
-          }
-          Group { Anchor: (Width: 12, Height: 44); }
-          Label #GuildsStatusLabel {
-            Text: "";
-            FlexWeight: 1;
-            Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+          @SingleActionBarInner {
+            #ButtonSlot {
+              $C.@SecondaryTextButton #RefreshGuildsButton {
+                @Text = "Aggiorna";
+                @Anchor = (Full: 0);
+              }
+            }
+            #StatusSlot {
+              Label #GuildsStatusLabel {
+                Text: "";
+                Anchor: (Full: 0);
+                Style: @StatusLabelStyle;
+              }
+            }
           }
         }
 
@@ -640,8 +711,9 @@ Group {
         Group {
           FlexWeight: 1;
           LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
           Anchor: (Left: 0, Right: 0);
-          Background: #10151e(0.7);
+          Background: @PanelBg;
           Padding: (Full: 8);
 
           Group #AdminGuildList {
@@ -655,24 +727,28 @@ Group {
         Label #SelectedGuildLabel {
           Text: "Membri gilda: (nessuna)";
           Anchor: (Height: 20);
-          Style: (FontSize: 13, TextColor: #b4c8c9);
+          Style: @StatusLabelStyle;
         }
 
         Group { Anchor: (Height: 6); }
 
         // Bacheca (solo gilda selezionata)
         Group {
-          LayoutMode: Left;
           Anchor: (Left: 0, Right: 0, Height: 44);
-          $C.@SecondaryTextButton #RefreshGuildBoardButton {
-            @Text = "Aggiorna bacheca";
-            @Anchor = (Width: 180);
-          }
-          Group { Anchor: (Width: 12, Height: 44); }
-          Label #GuildBoardStatusLabel {
-            Text: "";
-            FlexWeight: 1;
-            Style: (FontSize: 13, TextColor: #b4c8c9, VerticalAlignment: Center);
+          @SingleActionBarInner {
+            #ButtonSlot {
+              $C.@SecondaryTextButton #RefreshGuildBoardButton {
+                @Text = "Aggiorna bacheca";
+                @Anchor = (Full: 0);
+              }
+            }
+            #StatusSlot {
+              Label #GuildBoardStatusLabel {
+                Text: "";
+                Anchor: (Full: 0);
+                Style: @StatusLabelStyle;
+              }
+            }
           }
         }
 
@@ -681,7 +757,8 @@ Group {
         Group {
           Anchor: (Left: 0, Right: 0, Height: 220);
           LayoutMode: TopScrolling;
-          Background: #10151e(0.7);
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
+          Background: @PanelBg;
           Padding: (Full: 8);
 
           Group #AdminGuildBoardList {
@@ -696,8 +773,9 @@ Group {
         Group {
           FlexWeight: 1;
           LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
           Anchor: (Left: 0, Right: 0);
-          Background: #10151e(0.7);
+          Background: @PanelBg;
           Padding: (Full: 8);
 
           Group #AdminGuildMembersList {
