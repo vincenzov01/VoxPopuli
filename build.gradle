@@ -5,7 +5,7 @@
         }
 
         group = 'com.veim.voxpopuli'
-        version = '1.0.0'
+        version = new Date().format('yyyy.MM.dd-HHmm') + "-alpha"
 
         repositories {
             mavenCentral()
