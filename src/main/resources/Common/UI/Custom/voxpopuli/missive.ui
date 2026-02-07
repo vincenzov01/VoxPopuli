@@ -2,6 +2,7 @@ $C = "../Common.ui";
 
 // --- MISSIVE (Messaggi privati) ---
 @PanelBg = #10151e(0.7);
+@StatusLabelStyle = (FontSize: 12, TextColor: #b4c8c9);
 Group #MissiveContent {
   FlexWeight: 1;
   LayoutMode: Top;
@@ -35,7 +36,7 @@ Group #MissiveContent {
   Label #SendMessageStatusLabel {
     Text: "";
     Anchor: (Left: 0, Right: 0, Height: 18);
-    Style: $C.@StatusLabelStyle;
+    Style: @StatusLabelStyle;
   }
   Group { Anchor: (Height: 10); }
   // Lista messaggi
