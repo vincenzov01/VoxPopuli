@@ -20,15 +20,10 @@ pom.xml.versionsBackup
 
 # IDE - ignore most but keep run configurations
 .idea/*
-.idea/runConfigurations/*
 *.iml
 
 # VS Code (keep common workspace files if you use them)
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 tools/*
 
 # Eclipse
