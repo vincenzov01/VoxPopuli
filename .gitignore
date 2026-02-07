@@ -23,13 +23,9 @@ pom.xml.versionsBackup
 *.iml
 
 # VS Code (keep common workspace files if you use them)
-.vscode/*
-tools/*
-
-# Eclipse
-.classpath
-.project
+.vscode/
 .settings/
+tools/
 
 # OS
 Thumbs.db
@@ -41,7 +37,6 @@ Desktop.ini
 
 # Hytale
 libs/HytaleServer.jar
-.tmp_commmonui/*
-.tmp_assets/*
-.tmp_ui_extract/*
-server/*
+.tmp_assets/
+.tmp_ui_extract/
+server/
