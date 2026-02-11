@@ -1,12 +1,12 @@
 package com.veim.voxpopuli.commands
 
-import com.hypixel.hytale.server.core.Message
-import com.hypixel.hytale.server.core.command.system.CommandContext
-import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand
-import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg
-import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes
 import com.hypixel.hytale.component.Ref
 import com.hypixel.hytale.component.Store
+import com.hypixel.hytale.server.core.Message
+import com.hypixel.hytale.server.core.command.system.CommandContext
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes
+import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand
 import com.hypixel.hytale.server.core.entity.entities.Player
 import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.World
@@ -17,7 +17,9 @@ import com.veim.voxpopuli.ui.VoxPopuliAdminDashboardPage
 import com.veim.voxpopuli.util.FileAuditLog
 import com.veim.voxpopuli.util.OpPermissionsUtil
 
-class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlayerCommand("voxadmin", "Apri la dashboard admin VoxPopuli") {
+class VoxPopuliAdminCommand(
+    private val plugin: VoxPopuliPlugin,
+) : AbstractPlayerCommand("voxadmin", "Apri la dashboard admin VoxPopuli") {
     override fun canGeneratePermission(): Boolean = false
 
     init {
@@ -30,7 +32,7 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
         store: Store<EntityStore>,
         ref: Ref<EntityStore>,
         playerRef: PlayerRef,
-        world: World
+        world: World,
     ) {
         val player = store.getComponent(ref, Player.getComponentType())
         if (player == null) {
@@ -49,9 +51,11 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
         player.pageManager.openCustomPage(ref, store, VoxPopuliAdminDashboardPage(playerRef, plugin))
     }
 
-    private class ManageAdminVariant(private val plugin: VoxPopuliPlugin) : AbstractPlayerCommand(
-        "Gestione admin VoxPopuli"
-    ) {
+    private class ManageAdminVariant(
+        private val plugin: VoxPopuliPlugin,
+    ) : AbstractPlayerCommand(
+            "Gestione admin VoxPopuli",
+        ) {
         private val actionArg: RequiredArg<String>
         private val usernameArg: RequiredArg<String>
 
@@ -67,7 +71,7 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
             store: Store<EntityStore>,
             ref: Ref<EntityStore>,
             playerRef: PlayerRef,
-            world: World
+            world: World,
         ) {
             val player = store.getComponent(ref, Player.getComponentType())
             if (player == null) {
@@ -77,34 +81,50 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
 
             val isOp = player.getUuid()?.let { OpPermissionsUtil.isOp(it) }
             if (isOp != true) {
-                val reason = if (isOp == null) {
-                    " (impossibile verificare OP: permissions.json non trovato)"
-                } else {
-                    ""
-                }
+                val reason =
+                    if (isOp == null) {
+                        " (impossibile verificare OP: permissions.json non trovato)"
+                    } else {
+                        ""
+                    }
                 commandContext.sendMessage(Message.raw("Non hai i permessi per gestire gli admin con /voxadmin.$reason"))
                 return
             }
 
-            val action = actionArg.get(commandContext)?.trim().orEmpty().lowercase()
+            val action =
+                actionArg
+                    .get(commandContext)
+                    ?.trim()
+                    .orEmpty()
+                    .lowercase()
             val targetUsername = usernameArg.get(commandContext)?.trim().orEmpty()
             if (targetUsername.isBlank()) {
                 commandContext.sendMessage(Message.raw("Uso: /voxadmin add <username> | /voxadmin remove <username>"))
                 return
             }
 
-            val makeAdmin = when (action) {
-                "add" -> true
-                "remove" -> false
-                else -> {
-                    commandContext.sendMessage(Message.raw("Azione non valida '$action'. Uso: /voxadmin add <username> | /voxadmin remove <username>"))
-                    return
-                }
-            }
+            val makeAdmin =
+                when (action) {
+                    "add" -> {
+                        true
+                    }
 
-            val target = UserServices.getUserByUsername(targetUsername)
+                    "remove" -> {
+                        false
+                    }
+
+                    else -> {
+                        commandContext.sendMessage(
+                            Message.raw("Azione non valida '$action'. Uso: /voxadmin add <username> | /voxadmin remove <username>"),
+                        )
+                        return
+                    }
+                }
+
+            // Se l'utente non esiste, crealo
+            val target = UserServices.getUserByUsername(targetUsername) ?: UserServices.createUser(targetUsername)
             if (target == null) {
-                commandContext.sendMessage(Message.raw("Utente '$targetUsername' non trovato."))
+                commandContext.sendMessage(Message.raw("Impossibile creare l'utente '$targetUsername'."))
                 return
             }
 
@@ -120,9 +140,10 @@ class VoxPopuliAdminCommand(private val plugin: VoxPopuliPlugin) : AbstractPlaye
                 actorUserId = actor?.id ?: -1,
                 action = if (makeAdmin) "admin.add" else "admin.remove",
                 targetUserId = target.id,
-                details = mapOf(
-                    "targetUsername" to target.username,
-                ),
+                details =
+                    mapOf(
+                        "targetUsername" to target.username,
+                    ),
             )
 
             val status = if (makeAdmin) "ADMIN" else "NON-ADMIN"

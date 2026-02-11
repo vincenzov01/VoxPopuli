@@ -11,7 +11,6 @@ import java.util.logging.Level
  * Listener for player connection events.
  */
 class PlayerListener {
-
     companion object {
         private val LOGGER = HytaleLogger.forEnclosingClass()
     }
@@ -44,14 +43,20 @@ class PlayerListener {
 
         LOGGER.at(Level.INFO).log("[VoxPopuli] Player %s connected to world %s", playerName, worldName)
 
-        // Logica: se l'utente non esiste nel database, lo crea
+        // Crea l'utente solo se l'username è valido (non vuoto, almeno 3 caratteri, solo lettere/numeri/underscore)
         if (playerRef != null) {
-            val existingUser = UserServices.getUserByUsername(playerRef.username)
-            if (existingUser == null) {
-                UserServices.createUser(playerRef.username)
-                LOGGER.at(Level.INFO).log("[VoxPopuli] Nuovo utente creato nel database: %s", playerRef.username)
+            val username = playerRef.username
+            val isValid = username.isNotBlank() && username.length >= 3 && username.matches(Regex("^[A-Za-z0-9_]+$"))
+            if (isValid) {
+                val existingUser = UserServices.getUserByUsername(username)
+                if (existingUser == null) {
+                    UserServices.createUser(username)
+                    LOGGER.at(Level.INFO).log("[VoxPopuli] Nuovo utente creato nel database: %s", username)
+                } else {
+                    LOGGER.at(Level.INFO).log("[VoxPopuli] Utente già presente nel database: %s", username)
+                }
             } else {
-                LOGGER.at(Level.INFO).log("[VoxPopuli] Utente già presente nel database: %s", playerRef.username)
+                LOGGER.at(Level.WARNING).log("[VoxPopuli] Username non valido: %s", username)
             }
         }
     }
