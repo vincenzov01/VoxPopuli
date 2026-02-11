@@ -1,4 +1,4 @@
-package com.veim.voxpopuli.ui.tabs
+package com.veim.voxpopuli.ui.tabs.admin
 
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder
@@ -27,7 +27,7 @@ class MessagesTab(
         messagesStatus = "${messages.size} messaggi"
 
         messages.forEachIndexed { index, message ->
-            cmd.append("#AdminMessageList", "voxpopuli/AdminMessageItem.ui")
+            cmd.append("#AdminMessageList", "voxpopuli/admin/AdminMessageItem.ui")
             val selector = "#AdminMessageList[$index]"
             val sender = UserServices.getUserById(message.senderId)?.username ?: "?"
             val receiver = UserServices.getUserById(message.receiverId)?.username ?: "?"

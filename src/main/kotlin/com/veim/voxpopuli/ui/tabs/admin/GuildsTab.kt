@@ -1,4 +1,4 @@
-package com.veim.voxpopuli.ui.tabs
+package com.veim.voxpopuli.ui.tabs.admin
 
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder
@@ -50,7 +50,7 @@ class GuildsTab(
         cmd.set("#GuildsStatusLabel.Text", guildsStatus)
 
         guilds.forEachIndexed { index, guild ->
-            cmd.append("#AdminGuildList", "voxpopuli/AdminGuildItem.ui")
+            cmd.append("#AdminGuildList", "voxpopuli/admin/AdminGuildItem.ui")
             val selector = "#AdminGuildList[$index]"
             val ownerName = UserServices.getUserById(guild.ownerId)?.username ?: "?"
             cmd.set("$selector #GuildName.Text", guild.name)
@@ -98,7 +98,7 @@ class GuildsTab(
 
         val members = sortedMembersForAdmin(guild.members)
         members.forEachIndexed { index, member ->
-            cmd.append("#AdminGuildMembersList", "voxpopuli/AdminGuildMemberItem.ui")
+            cmd.append("#AdminGuildMembersList", "voxpopuli/admin/AdminGuildMemberItem.ui")
             val selector = "#AdminGuildMembersList[$index]"
             val username = UserServices.getUserById(member.userId)?.username ?: "?"
             cmd.set("$selector #MemberName.Text", username)
@@ -162,7 +162,7 @@ class GuildsTab(
         guildBoardStatus = "$guildName: ${board.size} comunicazioni"
 
         board.forEachIndexed { index, message ->
-            cmd.append("#AdminGuildBoardList", "voxpopuli/AdminGuildBoardItem.ui")
+            cmd.append("#AdminGuildBoardList", "voxpopuli/admin/AdminGuildBoardItem.ui")
             val selector = "#AdminGuildBoardList[$index]"
             val author = UserServices.getUserById(message.authorId)?.username ?: "?"
             cmd.set("$selector #GuildName.Text", guildName)

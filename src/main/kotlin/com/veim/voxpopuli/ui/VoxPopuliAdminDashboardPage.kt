@@ -15,7 +15,16 @@ import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.veim.voxpopuli.VoxPopuliPlugin
 import com.veim.voxpopuli.database.UserServices
-import com.veim.voxpopuli.ui.tabs.*
+import com.veim.voxpopuli.ui.tabs.BaseVoxTab
+import com.veim.voxpopuli.ui.tabs.GildaTab
+import com.veim.voxpopuli.ui.tabs.MissiveTab
+import com.veim.voxpopuli.ui.tabs.VoxTab
+import com.veim.voxpopuli.ui.tabs.admin.AdminTab
+import com.veim.voxpopuli.ui.tabs.admin.ConfigTab
+import com.veim.voxpopuli.ui.tabs.admin.GuildsTab
+import com.veim.voxpopuli.ui.tabs.admin.LogsTab
+import com.veim.voxpopuli.ui.tabs.admin.MessagesTab
+import com.veim.voxpopuli.ui.tabs.admin.PostsTab
 import com.veim.voxpopuli.util.OpPermissionsUtil
 import java.util.logging.Level
 import com.hypixel.hytale.server.core.ui.builder.EventData as UIEventData
@@ -77,7 +86,7 @@ class VoxPopuliAdminDashboardPage(
     }
 
     private fun buildLayout(cmd: UICommandBuilder) {
-        cmd.append("voxpopuli/AdminDashboard.ui")
+        cmd.append("voxpopuli/admin/AdminDashboard.ui")
     }
 
     private fun renderHeader(cmd: UICommandBuilder) {

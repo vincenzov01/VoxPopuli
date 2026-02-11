@@ -1,4 +1,4 @@
-package com.veim.voxpopuli.ui.tabs
+package com.veim.voxpopuli.ui.tabs.admin
 
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder

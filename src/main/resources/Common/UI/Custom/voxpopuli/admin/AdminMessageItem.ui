@@ -1,4 +1,4 @@
-$C = "../Common.ui";
+$C = "../../Common.ui";
 
 Group {
   LayoutMode: Top;
@@ -12,13 +12,13 @@ Group {
 
     Group {
       LayoutMode: Left;
-      Anchor: (Height: 22);
-      Label #PostAuthor {
-        Text: "Autore";
-        Style: (FontSize: 18, TextColor: #ffffff(0.92), RenderBold: true);
+      Anchor: (Height: 20);
+      Label #MessageSender {
+        Text: "Da -> A";
+        Style: (FontSize: 16, TextColor: #ffffff(0.92), RenderBold: true);
         FlexWeight: 1;
       }
-      Label #PostTimestamp {
+      Label #MessageTimestamp {
         Text: "Data";
         Style: (FontSize: 12, TextColor: #b4c8c9(0.75), HorizontalAlignment: End);
         Anchor: (Width: 150);
@@ -27,24 +27,17 @@ Group {
 
     Group { Anchor: (Height: 6); }
 
-    Label #PostContent {
-      Text: "Contenuto...";
+    Label #MessageContent {
+      Text: "Messaggio...";
       Style: (FontSize: 15, TextColor: #e8f0f2(0.92), Wrap: true);
-      Anchor: (Left: 0, Right: 0, Height: 140);
+      Anchor: (Left: 0, Right: 0, Height: 96);
     }
 
     Group { Anchor: (Height: 6); }
 
     Group {
-      LayoutMode: Left;
+      LayoutMode: Right;
       Anchor: (Height: 32);
-
-      Label #LikeCount {
-        Text: "0 like";
-        FlexWeight: 1;
-        Style: (FontSize: 12, TextColor: #b4c8c9(0.75), VerticalAlignment: Center);
-      }
-
       $C.@SmallSecondaryTextButton #DeleteButton {
         @Text = "Elimina";
         @Anchor = (Width: 120);

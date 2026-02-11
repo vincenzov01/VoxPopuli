@@ -1,4 +1,4 @@
-package com.veim.voxpopuli.ui.tabs
+package com.veim.voxpopuli.ui.tabs.admin
 
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder
@@ -27,7 +27,7 @@ class PostsTab(
         postsStatus = "${posts.size} post"
 
         posts.forEachIndexed { index, post ->
-            cmd.append("#AdminPostList", "voxpopuli/AdminPostItem.ui")
+            cmd.append("#AdminPostList", "voxpopuli/admin/AdminPostItem.ui")
             val selector = "#AdminPostList[$index]"
             val author = UserServices.getUserById(post.authorId)?.username ?: "?"
             cmd.set("$selector #PostAuthor.Text", author)

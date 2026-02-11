@@ -1,4 +1,4 @@
-$C = "../Common.ui";
+$C = "../../Common.ui";
 
 // Admin UI uses flat colors (no parchment textures)
 
